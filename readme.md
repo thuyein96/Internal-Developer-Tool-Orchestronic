@@ -32,6 +32,8 @@ It’s built to reduce manual DevOps work, standardize provisioning, and speed u
 
 ## 🧩 Architecture (High Level)
 
+![Orchestronic Architecture Diagram](docs/project-diagram.png)
+
 - **Frontend**: Web UI for dev/admin workflows
 - **Backend API**: Handles auth, request lifecycle, approvals, orchestration triggers
 - **Automation/Orchestration**: Provisioning pipelines (e.g., Airflow jobs / scripts)
