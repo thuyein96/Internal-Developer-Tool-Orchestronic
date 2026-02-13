@@ -1,0 +1,29 @@
+1.Create a Service Principal and set env vars
+
+export ARM_CLIENT_ID="..."
+export ARM_CLIENT_SECRET="..."
+export ARM_SUBSCRIPTION_ID="..."
+export ARM_TENANT_ID="..."
+
+-------------------------------------
+
+2.cd into the folder containing the .tf files above and your terraform.tfvars.json.
+
+terraform init
+terraform validate
+terraform plan -var-file="terraform.tfvars.json"   # inspect what will be created
+terraform apply -var-file="terraform.tfvars.json" -auto-approve
+
+
+OR
+
+If you prefer passing vars on the CLI
+terraform apply \
+  -var="prefix=demo" \
+  -var="location=Southeast Asia" \
+  -var="vm_count=2" \
+  -var="db_count=0" \
+  -var="storage_count=1" \
+  -auto-approve
+
+-------------------------------------

@@ -1,0 +1,43 @@
+1.Configure AWS credentials (aws configure or environment variables)
+
+export AWS_ACCESS_KEY_ID="your-access-key"
+export AWS_SECRET_ACCESS_KEY="your-secret-key"
+export AWS_DEFAULT_REGION="us-east-1"
+
+------------------------------------
+
+2.cd into your terraform folder with these files.
+
+terraform init
+
+terraform validate
+
+terraform plan -var-file="terraform.tfvars.json"
+
+terraform apply -var-file="terraform.tfvars.json" -auto-approve
+
+-------------------------------------
+
+Example frontend payload (terraform.tfvars.json)
+json
+
+{
+  "prefix": "demo",
+  "region": "us-east-1",
+  "vm_count": 2,
+  "instance_type": "t3.micro",
+  "ami_id": "",
+  "key_pair_name": "my-key-pair",
+  "assign_public_ip": true,
+  "allowed_inbound_ports": [22, 80],
+  "storage_count": 1,
+  "db_count": 1,
+  "db_username": "admin",
+  "db_password": ""
+}
+
+If ami_id is empty, it will pick the latest Amazon Linux 2 AMI automatically.
+
+If db_password is empty and db_count > 0, Terraform will generate a secure random password and output it.
+
+If key_pair_name is empty, EC2 instances won’t have SSH access enabled via key pairs.

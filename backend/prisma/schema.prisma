@@ -1,0 +1,416 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Request {
+  id           String     @id @default(uuid())
+  status       Status     @default(Pending)
+  description  String
+  ownerId      String
+  createdAt    DateTime   @default(now())
+  displayCode  String     @unique
+  updatedAt    DateTime   @updatedAt
+  feedback     String?
+  repositoryId String     @unique
+  resourcesId  String?    @unique
+  owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  resources    Resources? @relation(fields: [resourcesId], references: [id], onDelete: Cascade)
+}
+
+model Repository {
+  id                     String                   @id @default(cuid())
+  name                   String                   @unique
+  description            String?
+  imageDeploymentId      String?                  @unique
+  resourcesId            String?                  @unique
+  status                 RepositoryStatus         @default(Pending)
+  imageDeployment        ImageDeployment?
+  resources              Resources?               @relation(fields: [resourcesId], references: [id], onDelete: Cascade)
+  RepositoryCollaborator RepositoryCollaborator[]
+  request                Request?
+  UserRepository         ownedRepository[]
+  collaborators          User[]                   @relation("RepositoryCollaborators")
+}
+
+model ImageDeployment {
+  id                String           @id @default(uuid())
+  repositoryId      String           @unique
+  AwsK8sClusterId   String?
+  AzureK8sClusterId String?
+  imageUrl          String
+  hostedUrl         String           @default("")
+  DeploymentStatus  String           @default("Pending")
+  awsK8sCluster     AwsK8sCluster?   @relation(fields: [AwsK8sClusterId], references: [id])
+  azureK8sCluster   AzureK8sCluster? @relation(fields: [AzureK8sClusterId], references: [id])
+  repository        Repository       @relation(fields: [repositoryId], references: [id])
+}
+
+model Resources {
+  id               String         @id @default(uuid())
+  name             String
+  region           String
+  resourceConfigId String         @unique
+  cloudProvider    CloudProvider
+  repository       Repository?
+  request          Request?
+  resourceConfig   ResourceConfig @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+}
+
+model ClusterRequest {
+  id         String @id @default(uuid())
+  ownerId    String
+  resourceId String
+  status     Status @default(Pending)
+}
+
+model ResourceConfig {
+  id              String                  @id @default(uuid())
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  AwsDatabase     AwsDatabaseInstance[]
+  AwsK8sCluster   AwsK8sCluster[]
+  AwsStorage      AwsStorageInstance[]
+  AwsVMInstance   AwsVMInstance[]
+  AzureDatabase   AzureDatabaseInstance[]
+  AzureK8sCluster AzureK8sCluster[]
+  AzureStorage    AzureStorageInstance[]
+  AzureVMInstance AzureVMInstance[]
+  resources       Resources?
+}
+
+model AzureDatabaseInstance {
+  id               String         @id @default(uuid())
+  storageGB        Int            @default(32768)
+  resourceConfigId String
+  name             String         @default("database-instance")
+  password         String         @default("P@ssw0rd!")
+  skuName          String         @default("B_Standard_B1ms")
+  username         String         @default("orchestronic_user")
+  engine           Engine         @default(PostgreSQL)
+  terraformState   Json?
+  resourceConfig   ResourceConfig @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+}
+
+model AzureStorageInstance {
+  id               String         @id @default(uuid())
+  resourceConfigId String
+  accessTier       String         @default("Hot")
+  kind             String         @default("StorageV2")
+  name             String         @default("storage-instance")
+  sku              String         @default("Standard_LRS")
+  terraformState   Json?
+  resourceConfig   ResourceConfig @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+}
+
+model AzureK8sCluster {
+  id               String            @id @default(uuid())
+  clusterName      String
+  nodeCount        Int               @default(3)
+  nodeSize         String            @default("Standard_D2s_v3")
+  kubeConfig       String?
+  clusterFqdn      String?
+  terraformState   Json?
+  resourceConfigId String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  resourceConfig   ResourceConfig    @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+  imageDeployments ImageDeployment[]
+  deployments      K8sDeployment[]
+  services         K8sService[]
+
+  @@index([resourceConfigId])
+}
+
+model AzureAksNodeType {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  numberOfCores Int
+  memoryInMB    Int
+  description   String?
+  raw           Json?
+  createdAt     DateTime @default(now())
+}
+
+model AzurePolicyK8s {
+  id                 String   @id @default(uuid())
+  maxNodeCount       Int      @default(10)
+  maxClustersPerUser Int      @default(5)
+  allowedNodeTypes   Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model User {
+  id                     String                   @id @default(uuid())
+  name                   String
+  email                  String                   @unique
+  role                   Role
+  gitlabUrl              String?
+  gitlabId               Int?
+  gitlabName             String?
+  CloudResourceSecret    CloudResourceSecret[]
+  RepositoryCollaborator RepositoryCollaborator[]
+  request                Request[]
+  UserRepository         ownedRepository[]
+  collaboratedRepos      Repository[]             @relation("RepositoryCollaborators")
+}
+
+model AzureVMInstance {
+  id               String         @id @default(uuid())
+  name             String
+  os               String
+  resourceConfigId String
+  sizeId           String
+  terraformState   Json?
+  pem              String?
+  resourceConfig   ResourceConfig @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+  size             AzureVMSize    @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+}
+
+model AwsVMInstance {
+  id                String          @id @default(uuid())
+  os                String
+  resourceConfigId  String
+  awsInstanceTypeId String
+  instanceName      String
+  keyName           String
+  sgName            String
+  terraformState    Json?
+  pem               String?
+  AwsInstanceType   AwsInstanceType @relation(fields: [awsInstanceTypeId], references: [id])
+  ResourceConfig    ResourceConfig  @relation(fields: [resourceConfigId], references: [id])
+}
+
+model AwsDatabaseInstance {
+  id                 String          @id @default(uuid())
+  resourceConfigId   String
+  dbAllocatedStorage Int
+  dbName             String
+  dbPassword         String
+  dbUsername         String
+  engine             Engine
+  awsDatabaseTypeId  String
+  terraformState     Json?
+  dbInstanceClass    AwsDatabaseType @relation(fields: [awsDatabaseTypeId], references: [id])
+  resourceConfig     ResourceConfig  @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+}
+
+model AwsStorageInstance {
+  id               String         @id @default(uuid())
+  resourceConfigId String
+  bucketName       String
+  terraformState   Json?
+  resourceConfig   ResourceConfig @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+}
+
+model AwsK8sCluster {
+  id               String            @id @default(uuid())
+  clusterName      String
+  nodeCount        Int               @default(3)
+  nodeSize         String            @default("t3.medium")
+  kubeConfig       String?
+  clusterEndpoint  String?
+  terraformState   Json?
+  resourceConfigId String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  resourceConfig   ResourceConfig    @relation(fields: [resourceConfigId], references: [id], onDelete: Cascade)
+  imageDeployments ImageDeployment[]
+  deployments      K8sDeployment[]
+  services         K8sService[]
+
+  @@index([resourceConfigId])
+}
+
+model AwsEksNodeType {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  numberOfCores Int
+  memoryInMB    Int
+  description   String?
+  raw           Json?
+  createdAt     DateTime @default(now())
+}
+
+model AwsPolicyK8s {
+  id                 String   @id @default(uuid())
+  maxNodeCount       Int      @default(10)
+  maxClustersPerUser Int      @default(5)
+  allowedNodeTypes   Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model K8sDeployment {
+  id              String           @id @default(uuid())
+  name            String
+  image           String
+  replicas        Int              @default(3)
+  port            Int              @default(80)
+  environmentVars Json?
+  awsClusterId    String?
+  azureClusterId  String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  awsCluster      AwsK8sCluster?   @relation(fields: [awsClusterId], references: [id], onDelete: Cascade)
+  azureCluster    AzureK8sCluster? @relation(fields: [azureClusterId], references: [id], onDelete: Cascade)
+
+  @@index([awsClusterId])
+  @@index([azureClusterId])
+}
+
+model K8sService {
+  id             String           @id @default(uuid())
+  name           String
+  type           String           @default("LoadBalancer")
+  port           Int              @default(80)
+  targetPort     Int              @default(80)
+  appSelector    String
+  awsClusterId   String?
+  azureClusterId String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  awsCluster     AwsK8sCluster?   @relation(fields: [awsClusterId], references: [id], onDelete: Cascade)
+  azureCluster   AzureK8sCluster? @relation(fields: [azureClusterId], references: [id], onDelete: Cascade)
+
+  @@index([awsClusterId])
+  @@index([azureClusterId])
+}
+
+model ownedRepository {
+  userId       String
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, repositoryId])
+}
+
+model RepositoryCollaborator {
+  userId       String
+  repositoryId String
+  assignedAt   DateTime   @default(now())
+  gitlabUserId Int        @default(0)
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, repositoryId])
+  @@map("RepositoryCollaborators")
+}
+
+model CloudResourceSecret {
+  id             String        @id @default(uuid())
+  clientId       String        @unique
+  clientSecret   String
+  subscriptionId String        @unique
+  tenantId       String?
+  cloudProvider  CloudProvider
+  userId         String
+  User           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AzureVMSize {
+  id                   String            @id @default(uuid())
+  name                 String            @unique
+  numberOfCores        Int
+  maxDataDiskCount     Int
+  memoryInMB           Int
+  osDiskSizeInMB       Int
+  resourceDiskSizeInMB Int
+  VMInstance           AzureVMInstance[]
+}
+
+model AzurePolicyVM {
+  id            String @id @default(uuid())
+  name          String
+  memoryInMB    Int
+  numberOfCores Int
+}
+
+model AzurePolicyDatabase {
+  id         String @id @default(uuid())
+  maxStorage Int
+}
+
+model AzurePolicyStorage {
+  id         String @id @default(uuid())
+  maxStorage Int
+}
+
+model AwsPolicyVM {
+  id            String @id @default(uuid())
+  memoryInMB    Int
+  name          String
+  numberOfCores Int
+}
+
+model AwsPolicyDatabase {
+  id         String @id @default(uuid())
+  maxStorage Int
+}
+
+model AwsPolicyStorage {
+  id         String @id @default(uuid())
+  maxStorage Int
+}
+
+model AwsInstanceType {
+  raw           Json
+  id            String          @id @default(uuid())
+  memoryInMB    Int
+  name          String          @unique
+  numberOfCores Int
+  AwsVMInstance AwsVMInstance[]
+}
+
+model AwsDatabaseType {
+  id                  String                @id @default(uuid())
+  DBInstanceClass     String
+  engine              Engine
+  raw                 Json
+  MinStorageSize      Int
+  MaxStorageSize      Int
+  AwsDatabaseInstance AwsDatabaseInstance[]
+
+  @@unique([engine, DBInstanceClass])
+}
+
+enum RepositoryStatus {
+  Created
+  Pending
+}
+
+enum CloudProvider {
+  AWS
+  AZURE
+}
+
+enum Status {
+  Pending
+  Approved
+  Rejected
+  Deleted
+}
+
+enum deployStatus {
+  Pending
+  Deployed
+}
+
+enum Role {
+  Admin
+  IT
+  Developer
+}
+
+enum Engine {
+  MySQL
+  PostgreSQL
+}
