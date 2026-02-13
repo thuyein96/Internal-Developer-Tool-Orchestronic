@@ -82,7 +82,7 @@ export default function PendingClusterDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["clusters"] })
       router.push("/requests")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Error approving cluster:", error)
       alert("Failed to approve cluster. Please try again.")
     },
@@ -100,7 +100,7 @@ export default function PendingClusterDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["clusters"] })
       router.push("/requests")
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Error rejecting cluster:", error)
       alert("Failed to reject cluster. Please try again.")
     },

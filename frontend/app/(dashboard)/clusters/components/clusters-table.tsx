@@ -13,7 +13,7 @@ import { getColumnsClusters } from "./column-clusters"
 import { getUser } from "@/app/api/user/api"
 import { Role } from "@/types/role"
 import { Status } from "@/types/api"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 
 interface ClustersTableProps {
   pageSize?: number

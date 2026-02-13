@@ -136,11 +136,10 @@ export default function ClusterDetailPage() {
           {/* Left side - Resource details */}
           <div className="lg:col-span-2 space-y-6">
             {resources && resources.length > 0 ? (
-              resources.map((resource, index) => (
+              resources.map((resource) => (
                 <ClusterResourceCard
                   key={resource.id}
                   resource={resource}
-                  index={index}
                 />
               ))
             ) : (
@@ -165,10 +164,8 @@ export default function ClusterDetailPage() {
 // Inline Components
 function ClusterResourceCard({
   resource,
-  index,
 }: {
   resource: ClusterDetail
-  index: number
 }) {
   const isConfigured = resource.kubeConfig !== null
 

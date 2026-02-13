@@ -342,7 +342,7 @@ export interface UpdateClusterStatusRequest {
 
 export async function updateClusterStatus(
   data: UpdateClusterStatusRequest
-): Promise<any> {
+): Promise<void> {
   return fetcher(`${process.env.NEXT_PUBLIC_API_URL}/project`, {
     method: "PATCH",
     credentials: "include",
@@ -383,7 +383,7 @@ export async function getUserClustersByStatus(
   )
 }
 
-export async function deploy(deploymentDto: DeploymentDto): Promise<any> {
+export async function deploy(deploymentDto: DeploymentDto): Promise<void> {
   console.log("Sending deploy request with body:", deploymentDto)
   return fetcher(`${process.env.NEXT_PUBLIC_API_URL}/project/deploy`, {
     method: "PATCH",

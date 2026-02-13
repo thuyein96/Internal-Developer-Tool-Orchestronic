@@ -50,7 +50,6 @@ interface ClientRequestFormProps {
 
 export default function ClientRequestForm({
   // suggestedName,
-  session,
 }: Readonly<ClientRequestFormProps>) {
   const repoName = useSelector((state: RootState) => state.repoName.value)
   const dispatch = useDispatch()

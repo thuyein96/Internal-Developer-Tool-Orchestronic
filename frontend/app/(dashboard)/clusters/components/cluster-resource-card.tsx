@@ -8,12 +8,10 @@ import { ClusterDetail } from "@/app/api/requests/api"
 
 interface ClusterResourceCardProps {
   resource: ClusterDetail
-  index: number
 }
 
 export default function ClusterResourceCard({
   resource,
-  index,
 }: ClusterResourceCardProps) {
   const isConfigured = resource.kubeConfig !== null
 

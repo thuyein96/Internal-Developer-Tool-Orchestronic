@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/popover"
 import { VmSizeDto } from "@/types/request"
 import React from "react"
-import { fetchClusterSizes, fetchVmSizes } from "@/app/api/policy/azure/api"
+import { fetchClusterSizes } from "@/app/api/policy/azure/api"
 import { getPriceOfVM } from "@/app/api/requests/api"
 import {
   FormControl,

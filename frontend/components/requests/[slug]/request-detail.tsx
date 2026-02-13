@@ -150,7 +150,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
         }
 
         return response
-      } catch (error) {
+      } catch {
         console.log("No hosted URL available yet")
         return null
       }
@@ -221,7 +221,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
               : CloudProvider.AZURE
             setDeploymentInfo({ clusterId, provider })
           }
-        } catch (error) {
+        } catch {
           console.log("Hosted URL not available yet")
         }
       }
