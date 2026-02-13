@@ -1,0 +1,57 @@
+---
+# 1. Wait for any background system updates to finish
+- name: Wait for automatic system updates to complete
+  raw: >
+    while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || 
+          fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || 
+          fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do 
+      echo 'Waiting for apt lock...'; 
+      sleep 5; 
+    done
+  changed_when: false
+
+# 2. Now it is safe to install packages
+- name: Install required packages
+  apt:
+    name:
+      - curl
+      - ca-certificates
+    update_cache: yes
+  register: apt_result
+  retries: 3
+  delay: 10
+  until: apt_result is success
+
+- name: Read token from master
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  delegate_to: master
+  register: k3s_token
+
+# TODO: remove later if not needed
+- name: Test connectivity to master
+  wait_for:
+    host: "{{ hostvars['master']['ansible_host'] }}"
+    port: 6443
+    timeout: 10
+  ignore_errors: yes
+# TODO: remove later if not needed
+- name: Check if k3s-agent already exists
+  stat:
+    path: /usr/local/bin/k3s-agent
+  register: k3s_agent_stat
+
+- name: Join K3s cluster
+  shell: |
+    curl -sfL https://get.k3s.io | \
+    K3S_URL=https://{{ hostvars['master']['ansible_host'] }}:6443 \
+    K3S_TOKEN="{{ k3s_token.content | b64decode | trim }}" \
+    sh -
+  args:
+    creates: /usr/local/bin/k3s-agent
+
+- name: Ensure k3s-agent is running
+  systemd:
+    name: k3s-agent
+    state: started
+    enabled: yes

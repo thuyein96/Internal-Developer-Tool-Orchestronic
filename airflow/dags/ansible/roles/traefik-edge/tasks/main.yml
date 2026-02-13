@@ -1,0 +1,204 @@
+- name: Install Docker
+  apt:
+    name: docker.io
+    update_cache: yes
+
+- name: Enable SSH TCP forwarding for bastion
+  copy:
+    dest: /etc/ssh/sshd_config.d/99-bastion-forwarding.conf
+    content: |
+      AllowTcpForwarding yes
+    mode: '0644'
+
+- name: Restart SSH
+  systemd:
+    name: ssh
+    state: restarted
+
+- name: Enable Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+# 2. Create a directory on the Edge node to hold your configs
+- name: Create Traefik config directory
+  file:
+    path: /etc/traefik-edge
+    state: directory
+    mode: '0755'
+
+- name: Create Traefik dynamic config directory
+  file:
+    path: /etc/traefik-edge/dynamic
+    state: directory
+    mode: '0755'
+
+- name: Create ACME storage directory
+  file:
+    path: /etc/letsencrypt
+    state: directory
+    mode: '0755'
+
+- name: Create ACME storage file
+  file:
+    path: /etc/letsencrypt/acme.json
+    state: touch
+    mode: '0600'
+
+# 3. Copy the static config file
+- name: Copy Static Configuration
+  copy:
+    src: traefik_static.toml
+    dest: /etc/traefik-edge/traefik.toml
+    mode: '0644'
+
+# 4. Process the template to generate the dynamic config with Worker IPs
+# This fills in the IPs from your inventory [k3s_workers] group
+
+- name: Discover Traefik service name (wait until it exists)
+  shell: |
+    set -euo pipefail
+    if kubectl -n kube-system get svc traefik >/dev/null 2>&1; then
+      echo -n "traefik"
+      exit 0
+    fi
+    kubectl -n kube-system get svc -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' \
+      | grep -E '^traefik($|[-])' | head -n1 || true
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ groups['k3s_master'][0] }}"
+  run_once: true
+  register: traefik_svc_name_cmd
+  changed_when: false
+  retries: 30
+  delay: 10
+  until: (traefik_svc_name_cmd.stdout | trim | length) > 0
+
+- name: Set Traefik service name fact
+  set_fact:
+    traefik_svc_name: "{{ traefik_svc_name_cmd.stdout | trim }}"
+
+- name: Get Traefik web nodePort (prefer port name web; fallback port 80)
+  shell: |
+    set -euo pipefail
+    svc="{{ traefik_svc_name }}"
+    val="$(kubectl -n kube-system get svc "$svc" -o jsonpath='{.spec.ports[?(@.name=="web")].nodePort}' 2>/dev/null || true)"
+    if [ -z "$val" ]; then
+      val="$(kubectl -n kube-system get svc "$svc" -o jsonpath='{.spec.ports[?(@.port==80)].nodePort}' 2>/dev/null || true)"
+    fi
+    echo -n "$val"
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ groups['k3s_master'][0] }}"
+  run_once: true
+  register: traefik_web_nodeport_cmd
+  changed_when: false
+  retries: 30
+  delay: 5
+  until: (traefik_web_nodeport_cmd.stdout | trim | length) > 0
+
+- name: Get Traefik websecure nodePort (prefer port name websecure; fallback port 443)
+  shell: |
+    set -euo pipefail
+    svc="{{ traefik_svc_name }}"
+    val="$(kubectl -n kube-system get svc "$svc" -o jsonpath='{.spec.ports[?(@.name=="websecure")].nodePort}' 2>/dev/null || true)"
+    if [ -z "$val" ]; then
+      val="$(kubectl -n kube-system get svc "$svc" -o jsonpath='{.spec.ports[?(@.port==443)].nodePort}' 2>/dev/null || true)"
+    fi
+    echo -n "$val"
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ groups['k3s_master'][0] }}"
+  run_once: true
+  register: traefik_websecure_nodeport_cmd
+  changed_when: false
+  retries: 30
+  delay: 5
+  until: (traefik_websecure_nodeport_cmd.stdout | trim | length) > 0
+
+- name: Set Traefik nodePort facts
+  set_fact:
+    traefik_web_nodeport: "{{ traefik_web_nodeport_cmd.stdout | trim }}"
+    traefik_websecure_nodeport: "{{ traefik_websecure_nodeport_cmd.stdout | trim }}"
+
+- name: Show discovered Traefik nodePorts
+  debug:
+    msg:
+      - "Traefik service in kube-system: {{ traefik_svc_name }}"
+      - "NodePort web (HTTP): {{ traefik_web_nodeport }}"
+      - "NodePort websecure (HTTPS): {{ traefik_websecure_nodeport }}"
+
+- name: Validate Traefik nodePort discovery
+  assert:
+    that:
+      - traefik_web_nodeport | length > 0
+      - traefik_websecure_nodeport | length > 0
+    fail_msg: "Could not discover Traefik nodePorts from k3s master. Ensure Traefik service exists in kube-system and kubectl works on the master."
+
+- name: Generate Dynamic Configuration
+  template:
+    src: traefik_dynamic.toml.j2
+    dest: "/etc/traefik-edge/dynamic/{{ cluster_name }}.toml"
+    mode: '0644'
+
+- name: Show rendered dynamic config (first 120 lines)
+  command: "sed -n '1,120p' /etc/traefik-edge/dynamic/{{ cluster_name }}.toml"
+  register: traefik_edge_dynamic_preview
+  changed_when: false
+
+- name: Print rendered dynamic config preview
+  debug:
+    msg: "{{ traefik_edge_dynamic_preview.stdout_lines }}"
+
+# 5. Run Traefik with Volumes
+# We mount the files we just created into the container
+- name: Run Traefik edge proxy
+  shell: |
+    docker rm -f traefik-edge || true
+    docker run -d \
+      --name traefik-edge \
+      --restart unless-stopped \
+      -p 80:80 \
+      -p 443:443 \
+      -p 8080:8080 \
+      -e CF_DNS_API_TOKEN={{ lookup('env', 'CLOUDFLARE_API_KEY') }} \
+      -e CF_ZONE_API_TOKEN={{ lookup('env', 'CLOUDFLARE_API_KEY') }} \
+      -v /etc/traefik-edge/traefik.toml:/etc/traefik/traefik.toml:ro \
+      -v /etc/traefik-edge/dynamic:/etc/traefik/dynamic:ro \
+      -v /etc/letsencrypt:/letsencrypt \
+      traefik:v2.11
+  register: traefik_edge_run
+
+- name: Show Traefik edge container id
+  debug:
+    msg: "Started traefik-edge container: {{ traefik_edge_run.stdout | default('') }}"
+
+- name: Tail Traefik edge logs (last 80 lines)
+  shell: docker logs --tail=80 traefik-edge
+  register: traefik_edge_logs
+  changed_when: false
+
+- name: Print Traefik edge logs tail
+  debug:
+    msg: "{{ traefik_edge_logs.stdout_lines }}"
+
+- name: Verify Cloudflare API token is set in container
+  shell: docker exec traefik-edge env | grep -c CF_DNS_API_TOKEN || echo "0"
+  register: cf_token_check
+  changed_when: false
+
+- name: Show Cloudflare token status
+  debug:
+    msg: "Cloudflare API token {{ 'IS SET ✓' if cf_token_check.stdout | int > 0 else 'NOT SET ✗' }} in Traefik container"
+
+- name: Wait for certificate acquisition (check logs)
+  shell: docker logs traefik-edge 2>&1 | grep -i "certificate\|acme" | tail -20
+  register: cert_logs
+  changed_when: false
+  ignore_errors: yes
+
+- name: Show certificate acquisition logs
+  debug:
+    msg: "{{ cert_logs.stdout_lines }}"
+  when: cert_logs.stdout_lines is defined

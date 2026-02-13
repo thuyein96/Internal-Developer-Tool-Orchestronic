@@ -1,0 +1,36 @@
+- name: Install required packages
+  apt:
+    name:
+      - curl
+      - ca-certificates
+    update_cache: yes
+
+- name: Install K3s server (master)
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - server \
+      --write-kubeconfig-mode 644 \
+      --tls-san {{ k3s_tls_san | default(ansible_host) }} \
+      --node-taint "node-role.kubernetes.io/control-plane=true:NoSchedule"
+  args:
+    creates: /usr/local/bin/k3s
+
+- name: Wait for K3s service
+  systemd:
+    name: k3s
+    state: started
+    enabled: yes
+
+- name: Wait for node token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    timeout: 180
+
+- name: Setup kubeconfig for ubuntu user
+  shell: |
+    mkdir -p /home/ubuntu/.kube
+    cp /etc/rancher/k3s/k3s.yaml /home/ubuntu/.kube/config
+    sed -i "s/127.0.0.1/{{ k3s_kubeconfig_server | default(ansible_host) }}/g" /home/ubuntu/.kube/config
+    chown -R ubuntu:ubuntu /home/ubuntu/.kube
+
+# - name: Install K3s Ingress Controller
+#   include_tasks: ingress-controller.yml

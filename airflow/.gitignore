@@ -1,0 +1,5 @@
+dags/.env
+dags/__pycache__/
+logs/
+dags/terraform/
+.env

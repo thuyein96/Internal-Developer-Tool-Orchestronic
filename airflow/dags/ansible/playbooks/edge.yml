@@ -1,0 +1,4 @@
+- hosts: edge
+  become: true
+  roles:
+    - traefik-edge

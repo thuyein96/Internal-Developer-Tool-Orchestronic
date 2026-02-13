@@ -1,0 +1,4 @@
+- hosts: k3s_master
+  become: true
+  roles:
+    - k3s-master

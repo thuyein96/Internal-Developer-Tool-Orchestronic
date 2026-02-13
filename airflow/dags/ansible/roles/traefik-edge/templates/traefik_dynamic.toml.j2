@@ -1,0 +1,37 @@
+{% set ck = (cluster_name | default('cluster') | replace('-', '_')) %}
+
+[http]
+  # ----------------------------------------------------------------
+  # Multi-cluster edge routing
+  # Host format REQUIRED: <app>.<cluster_name>.<edge-ip>.nip.io
+  # Example: myapp.cluster1.47.128.76.54.nip.io
+  # ----------------------------------------------------------------
+  [http.routers.to_k3s_{{ ck }}_ingress]
+    entryPoints = ["web"]
+    rule = "HostRegexp(`{app:.+}.{{ cluster_name }}.orchestronic.dev`)"
+    service = "k3s_{{ ck }}_ingress_http"
+    middlewares = ["https-redirect"]
+
+  [http.services.k3s_{{ ck }}_ingress_http.loadBalancer]
+    passHostHeader = true
+  {% for host in groups['k3s_workers'] %}
+    [[http.services.k3s_{{ ck }}_ingress_http.loadBalancer.servers]]
+      url = "http://{{ hostvars[host]['private_ip'] }}:{{ traefik_web_nodeport }}"
+  {% endfor %}
+
+  [http.routers.to_k3s_{{ ck }}_ingress_secure]
+    entryPoints = ["websecure"]
+    rule = "HostRegexp(`{app:.+}.{{ cluster_name }}.orchestronic.dev`)"
+    service = "k3s_{{ ck }}_ingress_http"
+    [http.routers.to_k3s_{{ ck }}_ingress_secure.tls]
+      certResolver = "letsencrypt"
+      [[http.routers.to_k3s_{{ ck }}_ingress_secure.tls.domains]]
+        main = "{{ cluster_name }}.orchestronic.dev"
+        sans = ["*.{{ cluster_name }}.orchestronic.dev"]
+
+  # [http.services.k3s_{{ ck }}_ingress_https.loadBalancer]
+  #   passHostHeader = true
+  # {% for host in groups['k3s_workers'] %}
+  #   [[http.services.k3s_{{ ck }}_ingress_https.loadBalancer.servers]]
+  #    url = "https://{{ hostvars[host]['private_ip'] }}:{{ traefik_websecure_nodeport }}"
+  # {% endfor %}

@@ -1,0 +1,49 @@
+# nano compose.yaml
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:${GITLAB_CE_VERSION}
+    restart: always
+    container_name: "${GITLAB_HOST}"
+    hostname: "${GITLAB_HOST_URL}"
+    environment:
+      - external_url=http://${GITLAB_HOST_URL}
+      - GITLAB_ROOT_PASSWORD=${GITLAB_ROOT_PASSWORD}
+    ports:
+      - ${GITLAB_HTTP_PORT}:80
+      - ${GITLAB_HTTPS_PORT}:443
+      - ${GITLAB_SSH_PORT}:22
+    volumes:
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/gitlab/config:/etc/gitlab
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/gitlab/logs:/var/log/gitlab
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/gitlab/data:/var/opt/gitlab
+#    dns:
+#      - "${CUSTOM_DNS}"
+    networks:
+      gitlab:
+        aliases:
+          - ${GITLAB_HOST_URL}
+    labels:
+      version: "latest"
+      description: "Deployed on 01-11-2025"
+
+  # Gutlab Runner Must not be on the Gitlab server(Best Practices: Keep it in same LAN and on another server to build Jobs...)
+  runner:
+    image: gitlab/gitlab-runner:${GITLAB_RUNNER_VERSION}
+    restart: always
+    container_name: gitlab_runner
+    network_mode: 'host'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/gitlab/runner:/etc/gitlab-runner
+#    dns:
+#      - "${CUSTOM_DNS}"
+    labels:
+      version: "latest"
+      description: "Deployed on 01-11-2025"
+
+networks:
+  gitlab:
+    driver: bridge
+    name: gitlab
+    labels:
+      - "purpose=gitlab-network"

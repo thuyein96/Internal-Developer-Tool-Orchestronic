@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: airflow_rabbitmq_broker
+    hostname: rabbitmq # CRITICAL: This must match the hostname in the BROKER_URL above
+    environment:
+      RABBITMQ_DEFAULT_USER: airflow
+      RABBITMQ_DEFAULT_PASS: airflow
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+      - rabbitmq-data-volume:/var/lib/rabbitmq
+    networks:
+      - airflow_shared_network
+
+volumes:
+  rabbitmq-data-volume:
+
+networks:
+  airflow_shared_network:
+    external: true

@@ -1,0 +1,32 @@
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+    [entryPoints.web.http.redirections.entryPoint]
+      to = "websecure"
+      scheme = "https"
+  
+  [entryPoints.websecure]
+    address = ":443"
+
+[providers]
+  [providers.file]
+    directory = "/etc/traefik/dynamic"
+    watch = true
+
+[api]
+  dashboard = true
+  insecure = true  # Be careful with this in production!
+
+[certificatesResolvers.letsencrypt.acme]
+  email = "thuyein1996alpha@gmail.com"
+  storage = "/letsencrypt/acme.json"
+  caServer = "https://acme-v02.api.letsencrypt.org/directory"
+  [certificatesResolvers.letsencrypt.acme.dnsChallenge]
+    provider = "cloudflare"
+    delayBeforeCheck = 90
+    resolvers = ["1.1.1.1:53", "1.0.0.1:53"]
+
+[log]
+  level = "DEBUG"
+
+[accessLog]

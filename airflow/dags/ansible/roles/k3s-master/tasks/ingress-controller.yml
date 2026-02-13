@@ -1,0 +1,47 @@
+---
+# Install Traefik Ingress Controller for K3s
+- name: Install K3s Traefik Ingress Controller
+  shell: |
+    kubectl apply -f - <<'EOF'
+    apiVersion: helm.cattle.io/v1
+    kind: HelmChart
+    metadata:
+      name: traefik
+      namespace: kube-system
+    spec:
+      chart: traefik
+      repo: https://helm.traefik.io/traefik
+      version: 26.0.0
+      targetNamespace: kube-system
+      set:
+        ports.web.nodePort: "30080"
+        ports.websecure.nodePort: "30443"
+        service.type: "NodePort"
+        ingressClass.enabled: "true"
+        ingressClass.isDefaultClass: "true"
+    EOF
+  register: traefik_install
+  retries: 3
+  delay: 10
+  until: traefik_install.rc == 0
+
+- name: Wait a bit for Helm controller to create resources
+  pause:
+    seconds: 15
+
+- name: Wait for Traefik pods to be ready
+  shell: |
+    kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=traefik -n kube-system --timeout=300s
+  register: traefik_ready
+  retries: 5
+  delay: 30
+
+- name: Verify Traefik Ingress Controller is running
+  shell: |
+    kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik
+    kubectl get svc -n kube-system traefik
+  register: traefik_status
+
+- name: Display Traefik status
+  debug:
+    var: traefik_status.stdout_lines

@@ -1,0 +1,4 @@
+- hosts: k3s_workers
+  become: true
+  roles:
+    - k3s-worker
