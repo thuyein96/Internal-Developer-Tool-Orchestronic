@@ -1,0 +1,965 @@
+[
+  {
+    "name": "multicolored-shipper-rg",
+    "resources": "2 VMs, 1 DB, 1 ST",
+    "developers": [
+      "Julie Grimes I",
+      "Tracy Greenfelder",
+      "Angel Johns",
+      "Shaun Gorczany",
+      "Andrew Paucek"
+    ],
+    "repository": "multicolored-shipper"
+  },
+  {
+    "name": "wordy-parade-rg",
+    "resources": "3 VMs",
+    "developers": ["Roy Parker", "Robyn Rolfson", "Caleb Stark", "Darren Hahn"],
+    "repository": "wordy-parade"
+  },
+  {
+    "name": "immense-republican-rg",
+    "resources": "3 VMs",
+    "developers": [
+      "Annie Zemlak",
+      "Mr. Steve Denesik I",
+      "Dixie Schumm",
+      "Maurice Gutmann"
+    ],
+    "repository": "immense-republican"
+  },
+  {
+    "name": "pointed-violin-rg",
+    "resources": "1 ST, 3 VMs, 2 DBs",
+    "developers": [
+      "Kim Koepp",
+      "Jaime Cole",
+      "Andy Medhurst",
+      "Lynda Stamm",
+      "Mary Blick"
+    ],
+    "repository": "pointed-violin"
+  },
+  {
+    "name": "sour-bookcase-rg",
+    "resources": "3 VMs",
+    "developers": [
+      "Marion Bergstrom",
+      "Kimberly Gorczany",
+      "Francisco Koelpin"
+    ],
+    "repository": "sour-bookcase"
+  },
+  {
+    "name": "thin-birth-rg",
+    "resources": "2 VMs",
+    "developers": [
+      "Tami Hermann",
+      "Denise Cruickshank",
+      "Jody Thiel",
+      "Lela Kshlerin"
+    ],
+    "repository": "thin-birth"
+  },
+  {
+    "name": "immediate-straw-rg",
+    "resources": "1 DB, 2 STs, 3 VMs",
+    "developers": ["Evan Mante Jr.", "Leticia Terry", "Violet Hammes"],
+    "repository": "immediate-straw"
+  },
+  {
+    "name": "stained-stay-rg",
+    "resources": "2 STs, 3 VMs, 2 DBs",
+    "developers": [
+      "Keith Gleichner",
+      "Renee Olson",
+      "Rene Flatley",
+      "Patti Beier MD"
+    ],
+    "repository": "stained-stay"
+  },
+  {
+    "name": "husky-formamide-rg",
+    "resources": "3 DBs",
+    "developers": [
+      "Regina Stokes",
+      "Verna Moen",
+      "Amelia Donnelly",
+      "Dr. Raul Lesch"
+    ],
+    "repository": "husky-formamide"
+  },
+  {
+    "name": "tidy-sundae-rg",
+    "resources": "1 ST",
+    "developers": ["Mr. Jared Mills", "Louise Cartwright", "Dianne Goldner II"],
+    "repository": "tidy-sundae"
+  },
+  {
+    "name": "funny-swath-rg",
+    "resources": "2 VMs, 1 DB, 1 ST",
+    "developers": [
+      "Brenda Collins",
+      "Lee Schmeler",
+      "Ralph Krajcik-Franey",
+      "Vicki Sanford"
+    ],
+    "repository": "funny-swath"
+  },
+  {
+    "name": "best-feather-rg",
+    "resources": "1 DB, 2 STs, 3 VMs",
+    "developers": ["Jamie Homenick", "Sheryl Conn", "Janice Bins"],
+    "repository": "best-feather"
+  },
+  {
+    "name": "sugary-violin-rg",
+    "resources": "2 VMs, 2 DBs, 2 STs",
+    "developers": [
+      "Francisco Keeling",
+      "Shane Casper",
+      "Dr. Teresa Gleichner-Trantow",
+      "Delia Heathcote"
+    ],
+    "repository": "sugary-violin"
+  },
+  {
+    "name": "ragged-making-rg",
+    "resources": "1 ST",
+    "developers": [
+      "Keith Gottlieb",
+      "Johnnie Mitchell",
+      "Marlon Tremblay",
+      "Glenn Wilderman",
+      "Jamie Runte"
+    ],
+    "repository": "ragged-making"
+  },
+  {
+    "name": "genuine-footrest-rg",
+    "resources": "3 DBs, 3 STs, 3 VMs",
+    "developers": [
+      "Rene DuBuque",
+      "Dr. Patti Bashirian",
+      "Dennis Lowe",
+      "Pedro Hodkiewicz"
+    ],
+    "repository": "genuine-footrest"
+  },
+  {
+    "name": "splendid-transparency-rg",
+    "resources": "3 VMs, 2 DBs",
+    "developers": [
+      "Larry Doyle",
+      "Elmer Kertzmann I",
+      "Stuart Walsh",
+      "Alyssa Beahan I"
+    ],
+    "repository": "splendid-transparency"
+  },
+  {
+    "name": "supportive-technician-rg",
+    "resources": "3 VMs",
+    "developers": [
+      "Charles Ferry",
+      "Nathan Erdman",
+      "Sharon Bartoletti",
+      "Mr. Ross Stoltenberg",
+      "Mr. Jeremy Lindgren"
+    ],
+    "repository": "supportive-technician"
+  },
+  {
+    "name": "old-fashioned-tooth-rg",
+    "resources": "1 VM",
+    "developers": ["Dewey Prosacco", "Israel Brown III", "Jill Schowalter II"],
+    "repository": "old-fashioned-tooth"
+  },
+  {
+    "name": "shameless-swath-rg",
+    "resources": "1 DB, 1 VM, 2 STs",
+    "developers": [
+      "Mr. Otis Mayer MD",
+      "Ebony Denesik",
+      "Pam Auer",
+      "Meghan Kiehn"
+    ],
+    "repository": "shameless-swath"
+  },
+  {
+    "name": "present-slipper-rg",
+    "resources": "1 DB",
+    "developers": [
+      "Bruce Feest",
+      "Calvin Haley",
+      "Karl Hodkiewicz",
+      "Ms. Florence Wilkinson",
+      "Nancy Gottlieb"
+    ],
+    "repository": "present-slipper"
+  },
+  {
+    "name": "assured-scorn-rg",
+    "resources": "3 VMs",
+    "developers": ["Irene Stiedemann", "Bobbie Cronin MD", "Emmett Morissette"],
+    "repository": "assured-scorn"
+  },
+  {
+    "name": "rewarding-chops-rg",
+    "resources": "1 DB, 3 STs",
+    "developers": ["Violet Jast", "Hope Schimmel", "Bob Schinner"],
+    "repository": "rewarding-chops"
+  },
+  {
+    "name": "well-off-conservation-rg",
+    "resources": "2 VMs, 2 STs, 3 DBs",
+    "developers": [
+      "Alvin Hauck",
+      "Johanna Gleason",
+      "Malcolm Cormier I",
+      "Ismael Kutch",
+      "Clint Hammes"
+    ],
+    "repository": "well-off-conservation"
+  },
+  {
+    "name": "misguided-glider-rg",
+    "resources": "1 VM",
+    "developers": [
+      "Albert Veum",
+      "Nettie Satterfield",
+      "Mr. Albert Volkman-Weimann"
+    ],
+    "repository": "misguided-glider"
+  },
+  {
+    "name": "fine-pepper-rg",
+    "resources": "1 ST, 3 DBs, 1 VM",
+    "developers": [
+      "Henry Stiedemann",
+      "Maxine Ratke",
+      "Norma Hartmann",
+      "Miss Shelia Heller"
+    ],
+    "repository": "fine-pepper"
+  },
+  {
+    "name": "elderly-slime-rg",
+    "resources": "3 DBs, 1 ST",
+    "developers": ["Doris Rolfson PhD", "Sophie Fisher IV", "Sonya Rippin DVM"],
+    "repository": "elderly-slime"
+  },
+  {
+    "name": "rectangular-halt-rg",
+    "resources": "3 VMs",
+    "developers": ["Theodore Gleason", "Mr. Miguel Towne DDS", "Lana Streich"],
+    "repository": "rectangular-halt"
+  },
+  {
+    "name": "nice-ferret-rg",
+    "resources": "1 VM, 2 DBs",
+    "developers": [
+      "Rolando Little",
+      "William Christiansen",
+      "Lowell Johns",
+      "Julia Thompson"
+    ],
+    "repository": "nice-ferret"
+  },
+  {
+    "name": "shocked-pearl-rg",
+    "resources": "1 DB, 3 STs",
+    "developers": [
+      "Lola Hoeger",
+      "Jerald Hilll",
+      "Guadalupe Considine",
+      "Angelina Roberts",
+      "Alfredo Leffler"
+    ],
+    "repository": "shocked-pearl"
+  },
+  {
+    "name": "any-legging-rg",
+    "resources": "2 VMs, 1 ST",
+    "developers": ["Alfonso Koelpin", "Laurence Steuber", "Candice Abshire"],
+    "repository": "any-legging"
+  },
+  {
+    "name": "quixotic-outlaw-rg",
+    "resources": "3 STs",
+    "developers": [
+      "Colleen Swift",
+      "Timothy Spinka",
+      "Joyce Pacocha DDS",
+      "Jacqueline Denesik"
+    ],
+    "repository": "quixotic-outlaw"
+  },
+  {
+    "name": "elegant-mainstream-rg",
+    "resources": "2 DBs",
+    "developers": ["Pam Jenkins", "Allison Nicolas", "Bessie Nicolas"],
+    "repository": "elegant-mainstream"
+  },
+  {
+    "name": "bossy-sesame-rg",
+    "resources": "1 VM, 1 ST",
+    "developers": ["Frances Grant", "Leah Greenfelder", "Ken Auer MD"],
+    "repository": "bossy-sesame"
+  },
+  {
+    "name": "superior-reward-rg",
+    "resources": "3 STs, 1 DB, 2 VMs",
+    "developers": [
+      "Lena Haag",
+      "Emanuel Cole",
+      "Ruth Abbott",
+      "Freda Buckridge V",
+      "Ollie Hagenes-Monahan"
+    ],
+    "repository": "superior-reward"
+  },
+  {
+    "name": "baggy-distinction-rg",
+    "resources": "3 VMs, 3 STs",
+    "developers": [
+      "Dr. Wallace Schuster",
+      "Ernesto Tremblay DDS",
+      "Ralph Nikolaus"
+    ],
+    "repository": "baggy-distinction"
+  },
+  {
+    "name": "quiet-airmail-rg",
+    "resources": "2 DBs",
+    "developers": [
+      "Veronica Goyette",
+      "Van Kuhlman",
+      "Terrance Sipes",
+      "Carole Robel MD",
+      "Salvatore Hintz"
+    ],
+    "repository": "quiet-airmail"
+  },
+  {
+    "name": "sudden-shore-rg",
+    "resources": "2 VMs, 1 ST, 2 DBs",
+    "developers": [
+      "Clyde Hintz DDS",
+      "Estelle Stiedemann",
+      "Margarita Hessel-Cole",
+      "Robin Hoppe"
+    ],
+    "repository": "sudden-shore"
+  },
+  {
+    "name": "artistic-disk-rg",
+    "resources": "1 ST, 2 VMs",
+    "developers": ["Antonia Ritchie", "Steve Kovacek V", "Marion Zboncak"],
+    "repository": "artistic-disk"
+  },
+  {
+    "name": "qualified-tune-up-rg",
+    "resources": "2 VMs",
+    "developers": [
+      "Dana Huels",
+      "Andrea Schmitt-Wilderman",
+      "Toby Fritsch",
+      "Tracy Bruen",
+      "Trevor Kunze"
+    ],
+    "repository": "qualified-tune-up"
+  },
+  {
+    "name": "well-lit-newsstand-rg",
+    "resources": "2 VMs",
+    "developers": [
+      "Mr. Douglas Hirthe",
+      "Randolph Schmitt",
+      "Kayla Lemke",
+      "Pamela Armstrong"
+    ],
+    "repository": "well-lit-newsstand"
+  },
+  {
+    "name": "taut-understanding-rg",
+    "resources": "1 VM, 1 ST, 2 DBs",
+    "developers": [
+      "Arturo Russel",
+      "Doug Bashirian",
+      "Gwendolyn Hahn",
+      "Sidney Johns"
+    ],
+    "repository": "taut-understanding"
+  },
+  {
+    "name": "expert-importance-rg",
+    "resources": "3 STs, 3 DBs",
+    "developers": ["Jesse Koelpin", "Shannon Collins", "Sophia Kulas"],
+    "repository": "expert-importance"
+  },
+  {
+    "name": "formal-brief-rg",
+    "resources": "1 ST, 3 VMs, 2 DBs",
+    "developers": [
+      "Dr. Ronald Beahan",
+      "Angelo Gerlach-Douglas",
+      "Yvette O'Kon"
+    ],
+    "repository": "formal-brief"
+  },
+  {
+    "name": "knotty-tinderbox-rg",
+    "resources": "3 STs, 3 DBs, 2 VMs",
+    "developers": [
+      "Wilbert Price I",
+      "Cassandra Lowe",
+      "Mr. Christian Hegmann",
+      "Martha Hayes"
+    ],
+    "repository": "knotty-tinderbox"
+  },
+  {
+    "name": "only-illusion-rg",
+    "resources": "3 DBs, 2 VMs",
+    "developers": ["Brett Barton", "Belinda Leffler", "Grant Bartell"],
+    "repository": "only-illusion"
+  },
+  {
+    "name": "pointless-humidity-rg",
+    "resources": "1 VM, 2 STs",
+    "developers": ["Jon Goodwin", "Rita Nicolas", "Miss Josephine McCullough"],
+    "repository": "pointless-humidity"
+  },
+  {
+    "name": "brisk-oil-rg",
+    "resources": "3 STs, 1 DB, 1 VM",
+    "developers": ["Danielle Parisian", "Terry Denesik", "Dave Hahn"],
+    "repository": "brisk-oil"
+  },
+  {
+    "name": "pastel-rim-rg",
+    "resources": "1 DB, 2 STs, 1 VM",
+    "developers": [
+      "Sara Heathcote",
+      "Alfonso Mayert",
+      "Kendra Schaefer",
+      "Meghan Green"
+    ],
+    "repository": "pastel-rim"
+  },
+  {
+    "name": "rough-celsius-rg",
+    "resources": "2 DBs, 3 VMs",
+    "developers": ["Marta Stark", "Myra McKenzie", "Raquel Jast"],
+    "repository": "rough-celsius"
+  },
+  {
+    "name": "tame-dream-rg",
+    "resources": "2 DBs, 1 VM, 2 STs",
+    "developers": [
+      "Sheryl Schaden",
+      "Yolanda Haag",
+      "Gerardo Metz",
+      "Mr. Randall Graham I"
+    ],
+    "repository": "tame-dream"
+  },
+  {
+    "name": "dismal-tuber-rg",
+    "resources": "3 VMs, 1 ST",
+    "developers": [
+      "Brent Crooks I",
+      "Rudy Carter",
+      "Ms. Jenna Bechtelar",
+      "Victor Block"
+    ],
+    "repository": "dismal-tuber"
+  },
+  {
+    "name": "shameful-slide-rg",
+    "resources": "2 DBs, 3 VMs",
+    "developers": [
+      "Jorge Heaney",
+      "Jody Wolff",
+      "Sonya Pfeffer IV",
+      "Elbert Hirthe"
+    ],
+    "repository": "shameful-slide"
+  },
+  {
+    "name": "concerned-kielbasa-rg",
+    "resources": "2 DBs, 3 VMs, 2 STs",
+    "developers": ["Lula Bednar", "Shawna Kuphal", "Leroy Fadel"],
+    "repository": "concerned-kielbasa"
+  },
+  {
+    "name": "unwelcome-editor-rg",
+    "resources": "3 STs",
+    "developers": [
+      "Jana Schmidt",
+      "Julian Kihn",
+      "Rogelio Klein",
+      "Gerardo Kerluke"
+    ],
+    "repository": "unwelcome-editor"
+  },
+  {
+    "name": "afraid-conservation-rg",
+    "resources": "2 STs, 1 DB",
+    "developers": ["Felicia Corkery", "Gwen O'Keefe", "Stuart Osinski IV"],
+    "repository": "afraid-conservation"
+  },
+  {
+    "name": "distorted-gown-rg",
+    "resources": "1 ST, 1 VM, 2 DBs",
+    "developers": [
+      "Brenda Pagac",
+      "Genevieve Zulauf",
+      "Brad Blanda",
+      "Carroll DuBuque",
+      "Dominick Feil"
+    ],
+    "repository": "distorted-gown"
+  },
+  {
+    "name": "mysterious-tapioca-rg",
+    "resources": "3 STs, 3 VMs",
+    "developers": ["Erik Russel", "Ted Gislason", "Christine Howe V"],
+    "repository": "mysterious-tapioca"
+  },
+  {
+    "name": "athletic-ostrich-rg",
+    "resources": "2 VMs, 3 STs",
+    "developers": [
+      "Ms. Amelia Larkin DDS",
+      "Virginia Hills",
+      "Victoria Hoeger",
+      "Dr. Mathew Baumbach"
+    ],
+    "repository": "athletic-ostrich"
+  },
+  {
+    "name": "wilted-vanadyl-rg",
+    "resources": "1 ST, 1 DB, 3 VMs",
+    "developers": [
+      "Dr. Rex Hettinger Sr.",
+      "Merle Wisozk",
+      "Janice Johns",
+      "Kathy Donnelly"
+    ],
+    "repository": "wilted-vanadyl"
+  },
+  {
+    "name": "funny-topsail-rg",
+    "resources": "3 VMs",
+    "developers": [
+      "Darrin Considine III",
+      "Bertha Hauck",
+      "Ebony Gutkowski",
+      "Derek Crist",
+      "Eleanor Zulauf"
+    ],
+    "repository": "funny-topsail"
+  },
+  {
+    "name": "physical-descent-rg",
+    "resources": "3 STs, 3 VMs, 1 DB",
+    "developers": [
+      "Marianne Lemke I",
+      "Maryann Stiedemann",
+      "Eleanor Heaney",
+      "Katherine Heaney",
+      "Donna Murazik-Nitzsche"
+    ],
+    "repository": "physical-descent"
+  },
+  {
+    "name": "failing-department-rg",
+    "resources": "1 DB, 1 ST, 3 VMs",
+    "developers": [
+      "Eric Fritsch",
+      "Candice Olson",
+      "Francis Walsh",
+      "Penny Goldner"
+    ],
+    "repository": "failing-department"
+  },
+  {
+    "name": "metallic-recovery-rg",
+    "resources": "2 VMs",
+    "developers": [
+      "Mr. Jonathon Murphy",
+      "Bridget Dickinson",
+      "Garrett Parisian",
+      "Mr. Luis Bernhard DVM",
+      "Lydia Beahan"
+    ],
+    "repository": "metallic-recovery"
+  },
+  {
+    "name": "altruistic-cosset-rg",
+    "resources": "2 DBs, 2 VMs, 2 STs",
+    "developers": [
+      "Alton Altenwerth",
+      "Delores Ebert",
+      "Bridget Braun",
+      "Ed Spencer",
+      "Seth Heidenreich"
+    ],
+    "repository": "altruistic-cosset"
+  },
+  {
+    "name": "usable-zen-rg",
+    "resources": "3 VMs, 1 ST",
+    "developers": ["Ethel Ruecker", "Jesus Bahringer", "Morris O'Hara"],
+    "repository": "usable-zen"
+  },
+  {
+    "name": "possible-accountability-rg",
+    "resources": "3 VMs, 2 DBs, 1 ST",
+    "developers": ["Danny Ratke", "Catherine Howell", "Sylvia Kihn-Bogisich"],
+    "repository": "possible-accountability"
+  },
+  {
+    "name": "impractical-merit-rg",
+    "resources": "3 DBs",
+    "developers": [
+      "Everett Denesik Jr.",
+      "Lorenzo Willms",
+      "Mr. Alex Pagac",
+      "Flora Gerhold"
+    ],
+    "repository": "impractical-merit"
+  },
+  {
+    "name": "electric-ownership-rg",
+    "resources": "3 DBs, 1 ST, 3 VMs",
+    "developers": [
+      "Gail Cummings III",
+      "Justin Lemke",
+      "Josephine Corwin Sr.",
+      "Elijah Quitzon",
+      "Mattie Jenkins"
+    ],
+    "repository": "electric-ownership"
+  },
+  {
+    "name": "minty-gloom-rg",
+    "resources": "2 STs",
+    "developers": [
+      "Monique Langworth",
+      "Thelma Haag",
+      "Hugo Kirlin",
+      "Tim Rippin MD",
+      "Rochelle Swift"
+    ],
+    "repository": "minty-gloom"
+  },
+  {
+    "name": "vibrant-exterior-rg",
+    "resources": "2 STs, 1 DB",
+    "developers": [
+      "Pablo Roberts",
+      "Myrtle Klein",
+      "Miriam Kling",
+      "Melody Littel"
+    ],
+    "repository": "vibrant-exterior"
+  },
+  {
+    "name": "recent-importance-rg",
+    "resources": "3 DBs, 3 VMs, 3 STs",
+    "developers": ["Kellie Ortiz", "Mr. Gene Willms", "Vera Hegmann"],
+    "repository": "recent-importance"
+  },
+  {
+    "name": "international-cuckoo-rg",
+    "resources": "1 DB",
+    "developers": [
+      "Andrew Lynch",
+      "Bryant Leannon",
+      "Corey Dooley",
+      "Cassandra Terry-Renner"
+    ],
+    "repository": "international-cuckoo"
+  },
+  {
+    "name": "front-minority-rg",
+    "resources": "1 DB, 2 STs, 3 VMs",
+    "developers": [
+      "Sabrina Schiller",
+      "Jacqueline Champlin",
+      "Bill Braun",
+      "Adrian Daniel"
+    ],
+    "repository": "front-minority"
+  },
+  {
+    "name": "knotty-lyre-rg",
+    "resources": "1 ST, 3 VMs",
+    "developers": ["Roman Jacobs III", "Mamie Fritsch", "Josephine Vandervort"],
+    "repository": "knotty-lyre"
+  },
+  {
+    "name": "rich-drug-rg",
+    "resources": "3 VMs, 2 STs, 1 DB",
+    "developers": ["Otis Jerde", "Sammy Lebsack", "Miss Joann Baumbach"],
+    "repository": "rich-drug"
+  },
+  {
+    "name": "silky-printer-rg",
+    "resources": "3 VMs, 2 DBs",
+    "developers": [
+      "Amanda Gerlach",
+      "Nathaniel Huels",
+      "Wanda Deckow",
+      "Heidi Hackett",
+      "Ms. Inez Bernhard"
+    ],
+    "repository": "silky-printer"
+  },
+  {
+    "name": "flickering-defendant-rg",
+    "resources": "1 DB, 1 ST, 3 VMs",
+    "developers": [
+      "Shelly Kerluke",
+      "Martha Larkin",
+      "Bradford Hagenes DVM",
+      "Melody Harber"
+    ],
+    "repository": "flickering-defendant"
+  },
+  {
+    "name": "knotty-pile-rg",
+    "resources": "1 ST, 2 VMs",
+    "developers": [
+      "Darin Krajcik",
+      "Bryant Wolff",
+      "Floyd Metz",
+      "Santiago Mohr"
+    ],
+    "repository": "knotty-pile"
+  },
+  {
+    "name": "wealthy-embarrassment-rg",
+    "resources": "3 VMs, 2 STs",
+    "developers": [
+      "Dr. Dianna Jaskolski",
+      "Marjorie Johnston",
+      "Benny Hackett",
+      "Ida Becker"
+    ],
+    "repository": "wealthy-embarrassment"
+  },
+  {
+    "name": "unsteady-statue-rg",
+    "resources": "3 DBs, 3 STs",
+    "developers": [
+      "Dr. Sandy Kassulke",
+      "Jonathon Mante II",
+      "Clifton Flatley",
+      "Kim Yundt"
+    ],
+    "repository": "unsteady-statue"
+  },
+  {
+    "name": "sparkling-outlaw-rg",
+    "resources": "1 DB, 2 VMs, 1 ST",
+    "developers": [
+      "Krista Crona",
+      "Rosemarie Kemmer",
+      "Perry Schmidt",
+      "Sheldon Tromp",
+      "Mr. Salvatore O'Hara"
+    ],
+    "repository": "sparkling-outlaw"
+  },
+  {
+    "name": "quintessential-widow-rg",
+    "resources": "3 STs, 2 DBs, 2 VMs",
+    "developers": [
+      "Christopher Kling DDS",
+      "Mr. Carl Kiehn",
+      "Julie Corkery-Harris"
+    ],
+    "repository": "quintessential-widow"
+  },
+  {
+    "name": "left-convection-rg",
+    "resources": "1 DB, 3 STs, 2 VMs",
+    "developers": [
+      "Shari Lebsack",
+      "Ronald Rippin",
+      "Oliver Ernser",
+      "Frankie Bartoletti PhD",
+      "Blanca Bechtelar"
+    ],
+    "repository": "left-convection"
+  },
+  {
+    "name": "compassionate-hornet-rg",
+    "resources": "2 STs, 1 VM, 2 DBs",
+    "developers": [
+      "Pedro Batz",
+      "Cecelia Kuhic",
+      "Dr. Cora MacGyver",
+      "Alfonso Satterfield"
+    ],
+    "repository": "compassionate-hornet"
+  },
+  {
+    "name": "calculating-validity-rg",
+    "resources": "3 DBs, 2 VMs, 1 ST",
+    "developers": ["Maxine Rohan", "Connie Hills", "Shane Schimmel"],
+    "repository": "calculating-validity"
+  },
+  {
+    "name": "rusty-substitution-rg",
+    "resources": "2 VMs, 3 DBs, 1 ST",
+    "developers": [
+      "Curtis Reilly",
+      "Abel Dooley",
+      "Lena Ruecker",
+      "Dr. Wilfred Breitenberg"
+    ],
+    "repository": "rusty-substitution"
+  },
+  {
+    "name": "responsible-cuckoo-rg",
+    "resources": "2 DBs, 2 STs",
+    "developers": [
+      "Mr. Ian Champlin",
+      "Judith Miller",
+      "Jesse Gulgowski",
+      "Martha Reichert",
+      "Irene Tillman"
+    ],
+    "repository": "responsible-cuckoo"
+  },
+  {
+    "name": "simple-willow-rg",
+    "resources": "1 DB, 2 VMs, 3 STs",
+    "developers": [
+      "Belinda Lemke",
+      "Dr. Debbie Fahey MD",
+      "Desiree Connelly",
+      "Chad Von",
+      "Mr. Eddie Beahan"
+    ],
+    "repository": "simple-willow"
+  },
+  {
+    "name": "fuzzy-story-rg",
+    "resources": "2 DBs, 1 ST, 3 VMs",
+    "developers": [
+      "Dave Hessel PhD",
+      "Arlene Cronin",
+      "Traci Mann",
+      "Jasmine Kohler"
+    ],
+    "repository": "fuzzy-story"
+  },
+  {
+    "name": "lawful-diagram-rg",
+    "resources": "2 STs",
+    "developers": [
+      "Brooke Legros-Gibson Sr.",
+      "Miss Katie Tillman",
+      "Larry Brown",
+      "Jacob Steuber"
+    ],
+    "repository": "lawful-diagram"
+  },
+  {
+    "name": "feline-drug-rg",
+    "resources": "2 STs",
+    "developers": [
+      "Marguerite Jakubowski",
+      "Bonnie MacGyver",
+      "Stewart Runolfsson"
+    ],
+    "repository": "feline-drug"
+  },
+  {
+    "name": "noxious-hyena-rg",
+    "resources": "1 DB, 3 STs",
+    "developers": ["Lillie Bergnaum", "Alice Green", "Doris Lueilwitz"],
+    "repository": "noxious-hyena"
+  },
+  {
+    "name": "instructive-fraudster-rg",
+    "resources": "1 VM",
+    "developers": [
+      "Cheryl Sawayn",
+      "Anna Cartwright PhD",
+      "Rita Greenholt-Erdman",
+      "Paulette Leuschke"
+    ],
+    "repository": "instructive-fraudster"
+  },
+  {
+    "name": "massive-muscat-rg",
+    "resources": "2 DBs",
+    "developers": [
+      "Dr. Angel Torp-Crooks",
+      "Bernice Bauch",
+      "Johnathan Robel",
+      "Nancy McCullough"
+    ],
+    "repository": "massive-muscat"
+  },
+  {
+    "name": "hidden-cutover-rg",
+    "resources": "3 STs",
+    "developers": [
+      "Judith Homenick",
+      "Erica Barrows",
+      "Joel Nolan",
+      "Dr. Diana Frami",
+      "Tommy Graham"
+    ],
+    "repository": "hidden-cutover"
+  },
+  {
+    "name": "insecure-lay-rg",
+    "resources": "1 VM",
+    "developers": ["Danny Nienow", "Miss Lucy Rutherford", "Pedro Krajcik"],
+    "repository": "insecure-lay"
+  },
+  {
+    "name": "prudent-pendant-rg",
+    "resources": "1 DB",
+    "developers": [
+      "Clifford Bechtelar",
+      "Ben Doyle",
+      "Ms. Cathy Hartmann",
+      "Rudy Franecki"
+    ],
+    "repository": "prudent-pendant"
+  },
+  {
+    "name": "well-lit-cross-contamination-rg",
+    "resources": "2 STs, 2 DBs, 1 VM",
+    "developers": ["Wayne Bailey", "Beth Abbott", "Hattie Gusikowski V"],
+    "repository": "well-lit-cross-contamination"
+  },
+  {
+    "name": "muffled-label-rg",
+    "resources": "1 VM, 3 DBs",
+    "developers": [
+      "Myrtle Keeling",
+      "Lula Keebler-Kessler I",
+      "Nadine Schultz",
+      "Edgar Mayer",
+      "Dr. John Douglas"
+    ],
+    "repository": "muffled-label"
+  },
+  {
+    "name": "joyful-lox-rg",
+    "resources": "2 VMs, 1 DB",
+    "developers": ["Jermaine Haag", "Miss Melba Welch", "Dr. Victoria Schultz"],
+    "repository": "joyful-lox"
+  }
+]

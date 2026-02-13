@@ -1,0 +1,34 @@
+[x] landing page
+[x] create IT and Admin feedback of an request to developer
+[x] Remove “Find a collaborator” only show when collaborator is added
+[x] Can’t add yourself into project collaborator
+[x] Change header of Account
+[x] Add “Connect SSH” Button
+[x] policies filter *
+    [x] API for saving policies
+    [x] Filter
+[x] save cloud provider secret key *
+    [x] PATCH
+[x] according in create data is lost when more than 2
+[x] create repository on Gitlab
+[x] better loading scene 
+[x] Fix backend auth
+[x] http://139.180.129.226/api must be https for azure ad to callback
+    [x] need ip
+[x] Repo link to gitlab
+[x] Admin doesn;'t know why i can't approve without typing feedback
+[x] create request with aws
+[x] create request correctly to Terraform
+[x] when creating request and waiting
+[x] Infrastricturte summary
+
+- if change role to Admin, can't access admin stuff, force logout
+- Detroy resource group
+
+TonKhaw
+- implement RQ, Airflow, and Terraform
+- What data Terraform need inorder to create for Azure and AWS
+
+
+
+each project have each VPC and use ACL for storage
