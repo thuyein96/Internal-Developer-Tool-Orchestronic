@@ -57,7 +57,7 @@ async function createNestApp() {
   SwaggerModule.setup('docs', nestApp, documentFactory, {
     customSiteTitle: 'Orchestronic API',
     customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
-    useGlobalPrefix: false,
+    useGlobalPrefix: true,
   });
 
   await nestApp.init();
