@@ -723,20 +723,42 @@ export class ProjectRequestService {
       },
     });
 
-    return await Promise.all(
-      resources.map(async (resource) => {
-        const clusters = await this.findClusterResourceConfigById(resource.id);
-        const firstCluster = clusters?.[0];
-        return {
-          clusterRequestId: resource.id,
-          id: firstCluster?.id || '',
-          name: firstCluster?.clusterName || '',
-          region: resource.region,
-          resourceConfigId: resource.resourceConfigId,
-          cloudProvider: resource.cloudProvider,
-        };
+    const resourceConfigIds = resources
+      .map((r) => r.resourceConfigId)
+      .filter(Boolean) as string[];
+
+    const [awsClusters, azureClusters] = await Promise.all([
+      this.databaseService.awsK8sCluster.findMany({
+        where: { resourceConfigId: { in: resourceConfigIds } },
       }),
-    );
+      this.databaseService.azureK8sCluster.findMany({
+        where: { resourceConfigId: { in: resourceConfigIds } },
+      }),
+    ]);
+
+    const awsByConfigId = new Map<string, any>();
+    for (const c of awsClusters) {
+      if (!awsByConfigId.has(c.resourceConfigId)) awsByConfigId.set(c.resourceConfigId, c);
+    }
+    const azureByConfigId = new Map<string, any>();
+    for (const c of azureClusters) {
+      if (!azureByConfigId.has(c.resourceConfigId)) azureByConfigId.set(c.resourceConfigId, c);
+    }
+
+    return resources.map((resource) => {
+      const firstCluster =
+        (resource.cloudProvider === CloudProvider.AWS
+          ? awsByConfigId.get(resource.resourceConfigId)
+          : azureByConfigId.get(resource.resourceConfigId)) || null;
+      return {
+        clusterRequestId: resource.id,
+        id: firstCluster?.id || '',
+        name: firstCluster?.clusterName || '',
+        region: resource.region,
+        resourceConfigId: resource.resourceConfigId,
+        cloudProvider: resource.cloudProvider,
+      };
+    });
   }
 
   async findClustersByUserIdAndStatus(req: BackendJwtPayload, status: Status) {
@@ -794,20 +816,42 @@ export class ProjectRequestService {
       },
     });
 
-    return await Promise.all(
-      resources.map(async (resource) => {
-        const clusters = await this.findClusterResourceConfigById(resource.id);
-        const firstCluster = clusters?.[0];
-        return {
-          clusterRequestId: resource.id,
-          id: firstCluster?.id || '',
-          name: firstCluster?.clusterName || '',
-          region: resource.region,
-          resourceConfigId: resource.resourceConfigId,
-          cloudProvider: resource.cloudProvider,
-        };
+    const resourceConfigIds = resources
+      .map((r) => r.resourceConfigId)
+      .filter(Boolean) as string[];
+
+    const [awsClusters, azureClusters] = await Promise.all([
+      this.databaseService.awsK8sCluster.findMany({
+        where: { resourceConfigId: { in: resourceConfigIds } },
       }),
-    );
+      this.databaseService.azureK8sCluster.findMany({
+        where: { resourceConfigId: { in: resourceConfigIds } },
+      }),
+    ]);
+
+    const awsByConfigId = new Map<string, any>();
+    for (const c of awsClusters) {
+      if (!awsByConfigId.has(c.resourceConfigId)) awsByConfigId.set(c.resourceConfigId, c);
+    }
+    const azureByConfigId = new Map<string, any>();
+    for (const c of azureClusters) {
+      if (!azureByConfigId.has(c.resourceConfigId)) azureByConfigId.set(c.resourceConfigId, c);
+    }
+
+    return resources.map((resource) => {
+      const firstCluster =
+        (resource.cloudProvider === CloudProvider.AWS
+          ? awsByConfigId.get(resource.resourceConfigId)
+          : azureByConfigId.get(resource.resourceConfigId)) || null;
+      return {
+        clusterRequestId: resource.id,
+        id: firstCluster?.id || '',
+        name: firstCluster?.clusterName || '',
+        region: resource.region,
+        resourceConfigId: resource.resourceConfigId,
+        cloudProvider: resource.cloudProvider,
+      };
+    });
   }
 
   async findAllApprovedClustersByUserId(req: BackendJwtPayload) {
@@ -826,20 +870,42 @@ export class ProjectRequestService {
       },
     });
 
-    return await Promise.all(
-      resources.map(async (resource) => {
-        const clusters = await this.findClusterResourceConfigById(resource.id);
-        const firstCluster = clusters?.[0];
-        return {
-          clusterRequestId: resource.id,
-          id: firstCluster?.id || '',
-          name: firstCluster?.clusterName || '',
-          region: resource.region,
-          resourceConfigId: resource.resourceConfigId,
-          cloudProvider: resource.cloudProvider,
-        };
+    const resourceConfigIds = resources
+      .map((r) => r.resourceConfigId)
+      .filter(Boolean) as string[];
+
+    const [awsClusters, azureClusters] = await Promise.all([
+      this.databaseService.awsK8sCluster.findMany({
+        where: { resourceConfigId: { in: resourceConfigIds } },
       }),
-    );
+      this.databaseService.azureK8sCluster.findMany({
+        where: { resourceConfigId: { in: resourceConfigIds } },
+      }),
+    ]);
+
+    const awsByConfigId = new Map<string, any>();
+    for (const c of awsClusters) {
+      if (!awsByConfigId.has(c.resourceConfigId)) awsByConfigId.set(c.resourceConfigId, c);
+    }
+    const azureByConfigId = new Map<string, any>();
+    for (const c of azureClusters) {
+      if (!azureByConfigId.has(c.resourceConfigId)) azureByConfigId.set(c.resourceConfigId, c);
+    }
+
+    return resources.map((resource) => {
+      const firstCluster =
+        (resource.cloudProvider === CloudProvider.AWS
+          ? awsByConfigId.get(resource.resourceConfigId)
+          : azureByConfigId.get(resource.resourceConfigId)) || null;
+      return {
+        clusterRequestId: resource.id,
+        id: firstCluster?.id || '',
+        name: firstCluster?.clusterName || '',
+        region: resource.region,
+        resourceConfigId: resource.resourceConfigId,
+        cloudProvider: resource.cloudProvider,
+      };
+    });
   }
 
   async findAllClustersWithStatus(status: Status) {
