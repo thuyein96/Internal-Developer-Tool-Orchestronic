@@ -17,6 +17,13 @@ export class AzureStrategy extends PassportStrategy(OIDCStrategy, 'azure-ad') {
       allowHttpForRedirectUrl: true,
       scope: ['profile', 'email', 'openid'],
       prompt: 'select_account',
+      useCookieInsteadOfSession: true,
+      cookieEncryptionKeys: [
+        {
+          key: (process.env.COOKIE_ENCRYPTION_KEY || 'eSo3PoOYP7BhJFaqfnsKz52m').substring(0, 32).padEnd(32, '0'),
+          iv: (process.env.COOKIE_ENCRYPTION_IV || '7Bcapd+pLbw+').substring(0, 12).padEnd(12, '0'),
+        },
+      ],
     });
   }
 
