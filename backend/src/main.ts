@@ -12,12 +12,18 @@ async function bootstrap() {
   app.use(cookieParser()); // 👈 add this
   app.setGlobalPrefix('api');
 
+  const isProd = process.env.NODE_ENV === 'production';
+
   app.use(
     session({
       secret: process.env.SESSION_SECRET || 'supersecret',
       resave: false,
       saveUninitialized: false,
-      cookie: { secure: false }, // true if HTTPS
+      cookie: {
+        secure: isProd,
+        sameSite: isProd ? 'none' as const : 'lax' as const,
+        ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
+      },
     }),
   );
 

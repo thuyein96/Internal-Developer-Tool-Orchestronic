@@ -45,6 +45,7 @@ export class AuthController {
   @UseGuards(AuthGuard('azure-ad'))
   azureCallback(@Req() req, @Res() res: Response) {
     const isProd = process.env.NODE_ENV === 'production';
+    const cookieDomain = process.env.COOKIE_DOMAIN; // e.g. '.gitlaborchestronic.dev'
 
     try {
       console.log('Azure callback - Req.user:', req.user);
@@ -72,11 +73,13 @@ export class AuthController {
       const refreshToken = this.jwt.sign({ id: user.id }, { expiresIn: '7d' });
 
       // Set cookies with proper configuration
+      // domain must be set to share cookies across subdomains (api.* and app.*)
       const cookieOptions = {
         httpOnly: true,
         secure: isProd,
         sameSite: isProd ? ('none' as const) : ('lax' as const),
         path: '/',
+        ...(cookieDomain ? { domain: cookieDomain } : {}),
       };
 
       res.cookie('access_token', accessToken, {
@@ -104,6 +107,7 @@ export class AuthController {
   @Post('refresh')
   refresh(@Req() req: RequestWithCookies, @Res() res: Response) {
     const isProd = process.env.NODE_ENV === 'production';
+    const cookieDomain = process.env.COOKIE_DOMAIN;
 
     const refreshToken = req.cookies['refresh_token'];
 
@@ -131,6 +135,8 @@ export class AuthController {
         secure: isProd,
         sameSite: isProd ? 'none' : 'lax',
         maxAge: 60 * 60 * 1000, // 1 hour
+        path: '/',
+        ...(cookieDomain ? { domain: cookieDomain } : {}),
       });
 
       return res.json({ accessToken });
@@ -143,6 +149,7 @@ export class AuthController {
   @Post('logout')
   logout(@Res() res: Response) {
     const isProd = process.env.NODE_ENV === 'production';
+    const cookieDomain = process.env.COOKIE_DOMAIN;
 
     // Clear application cookies
     res.clearCookie('access_token', {
@@ -150,6 +157,7 @@ export class AuthController {
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
       path: '/',
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
 
     res.clearCookie('refresh_token', {
@@ -157,6 +165,7 @@ export class AuthController {
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
       path: '/',
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
 
     // Azure AD logout with prompt parameter

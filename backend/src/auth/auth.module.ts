@@ -13,7 +13,7 @@ import { AzureStrategy } from './strategies/azure-ad.strategy';
       defaultStrategy: 'azure-ad',
     }),
     JwtModule.register({
-      secret: 'eSo3PoOYP7BhJFaqfnsKz52mo3cpV1vb3M38IGzaFt4=',
+      secret: process.env.JWT_SECRET || 'eSo3PoOYP7BhJFaqfnsKz52mo3cpV1vb3M38IGzaFt4=',
       signOptions: { expiresIn: '1h' },
     }),
     UserModule,

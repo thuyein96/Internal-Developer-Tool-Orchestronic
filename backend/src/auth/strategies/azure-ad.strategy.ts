@@ -1,7 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { OIDCStrategy } from 'passport-azure-ad';
-import { profile } from 'console';
 import { DatabaseService } from '../../database/database.service';
 import { Role } from '@prisma/client';
 
@@ -16,13 +15,12 @@ export class AzureStrategy extends PassportStrategy(OIDCStrategy, 'azure-ad') {
       responseMode: 'query',
       redirectUrl: process.env.AZURE_AD_REDIRECT_URI,
       allowHttpForRedirectUrl: true,
-      passReqToCallback: true,
       scope: ['profile', 'email', 'openid'],
       prompt: 'select_account',
     });
   }
 
-  async validate(profile: any) {
+  async validate(iss: string, sub: string, profile: any) {
     const email = profile._json.preferred_username;
 
     let user = await this.databaseService.user.findUnique({
