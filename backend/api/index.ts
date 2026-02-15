@@ -54,9 +54,10 @@ async function createNestApp() {
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(nestApp, config);
-  SwaggerModule.setup('api', nestApp, documentFactory, {
+  SwaggerModule.setup('docs', nestApp, documentFactory, {
     customSiteTitle: 'Orchestronic API',
     customfavIcon: 'https://avatars.githubusercontent.com/u/6936373?s=200&v=4',
+    useGlobalPrefix: false,
   });
 
   await nestApp.init();
