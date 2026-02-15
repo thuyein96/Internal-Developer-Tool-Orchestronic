@@ -5,7 +5,7 @@ import { DatabaseService } from '../../database/database.service';
 import { Role } from '@prisma/client';
 
 @Injectable()
-export class AzureStrategy extends PassportStrategy(OIDCStrategy, 'azure-ad') {
+export class AzureStrategy extends PassportStrategy(OIDCStrategy, 'azure-ad', true) {
   constructor(private readonly databaseService: DatabaseService) {
     super({
       identityMetadata: `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0/.well-known/openid-configuration`,
