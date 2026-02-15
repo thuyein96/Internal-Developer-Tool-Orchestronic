@@ -92,7 +92,7 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0",
-    "@vercel/node": "^3.2.30"
+    "@vercel/node": "^5.6.3"
   },
   "jest": {
     "moduleFileExtensions": [
