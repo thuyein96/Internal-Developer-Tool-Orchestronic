@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import {
   changeRequestStatus,
   deleteRequest,
@@ -23,6 +24,7 @@ import DescriptionCard from "./description-card"
 import { haveAdminOrIT, showDestroyButtonAfterCreation } from "@/lib/utils"
 import {
   AlertDialog,
+
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -87,7 +89,6 @@ import {
 // import { RepositoryStatus } from "@/types/repo"
 import { AwsRequestDetail, AzureRequestDetail } from "@/types/request"
 import { CloudProvider } from "@/types/resource"
-import Image from "next/image"
 
 // const AirflowLogs = lazy(() => import("./airflow-logs"))
 
@@ -99,9 +100,6 @@ export default function RequestDetail({ slug }: { slug: string }) {
 
   const [deploymentOpen, setDeploymentOpen] = useState(false)
   const [selectedClusterId, setSelectedClusterId] = useState<string>("")
-  const [deploymentProvider, setDeploymentProvider] = useState<CloudProvider>(
-    CloudProvider.AWS
-  )
   const [deploymentPort, setDeploymentPort] = useState<string>("80")
   const [repoPrivate, setRepoPrivate] = useState(false)
   const [vmEnv, setVmEnv] = useState<string>("")
@@ -142,9 +140,12 @@ export default function RequestDetail({ slug }: { slug: string }) {
         setHostedUrl(response.hostedUrl)
 
         // Store deployment info for pre-filling form
-        const clusterId = response.AwsK8sClusterId
+        const clusterId = response.AwsK8sClusterId || response.AzureK8sClusterId
         if (clusterId) {
-          setDeploymentInfo({ clusterId, provider: CloudProvider.AWS })
+          const provider = response.AwsK8sClusterId
+            ? CloudProvider.AWS
+            : CloudProvider.AZURE
+          setDeploymentInfo({ clusterId, provider })
         }
 
         return response
@@ -181,10 +182,10 @@ export default function RequestDetail({ slug }: { slug: string }) {
     enabled: deploymentOpen,
   })
 
-  // Filter clusters by selected deployment provider
+  // Filter clusters to show only AWS clusters
   const filteredClusters =
     approvedClusters?.filter(
-      (cluster) => cluster.cloudProvider === deploymentProvider
+      (cluster) => cluster.cloudProvider === CloudProvider.AWS
     ) ?? []
 
   const deployMutation = useMutation({
@@ -211,9 +212,13 @@ export default function RequestDetail({ slug }: { slug: string }) {
           console.log("Hosted URL:", addressResponse.hostedUrl)
 
           // Store deployment info
-          const clusterId = addressResponse.AwsK8sClusterId
+          const clusterId =
+            addressResponse.AwsK8sClusterId || addressResponse.AzureK8sClusterId
           if (clusterId) {
-            setDeploymentInfo({ clusterId, provider: CloudProvider.AWS })
+            const provider = addressResponse.AwsK8sClusterId
+              ? CloudProvider.AWS
+              : CloudProvider.AZURE
+            setDeploymentInfo({ clusterId, provider })
           }
         } catch {
           console.log("Hosted URL not available yet")
@@ -487,11 +492,8 @@ export default function RequestDetail({ slug }: { slug: string }) {
                       if (isOpen) {
                         // Pre-fill form if deployment info exists
                         if (deploymentInfo) {
-                          setDeploymentProvider(deploymentInfo.provider)
                           setSelectedClusterId(deploymentInfo.clusterId)
                           setDeploymentPort("3000")
-                        } else if (data) {
-                          setDeploymentProvider(data.resources.cloudProvider)
                         }
                       }
                     }}
@@ -517,7 +519,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                 <Cloud className="h-3.5 w-3.5" />
                                 Provider
                               </Label>
-                              <div className="flex items-center gap-2 h-9 px-3 py-2 border rounded-md bg-white dark:bg-transparent">
+                              <div className="flex items-center gap-2 h-10 px-3 py-2 border rounded-md bg-white">
                                 <Image
                                   src="/icon/aws.svg"
                                   width={16}
@@ -548,6 +550,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                   setDeploymentPort(e.target.value)
                                 }
                                 disabled={!!hostedUrl}
+                                className="h-10"
                               />
                             </div>
 
@@ -584,7 +587,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                               onValueChange={setSelectedClusterId}
                               disabled={!!hostedUrl}
                             >
-                              <SelectTrigger className="w-full">
+                              <SelectTrigger className="w-full h-10">
                                 <SelectValue placeholder="Select cluster" />
                               </SelectTrigger>
                               <SelectContent>
@@ -625,6 +628,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                 value={vmEnv}
                                 onChange={(e) => setVmEnv(e.target.value)}
                                 disabled={!!hostedUrl}
+                                className="h-10"
                               />
                             </div>
                             <div className="grid gap-2">
@@ -641,6 +645,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                 value={storageEnv}
                                 onChange={(e) => setStorageEnv(e.target.value)}
                                 disabled={!!hostedUrl}
+                                className="h-10"
                               />
                             </div>
                             <div className="grid gap-2">
@@ -657,6 +662,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                 value={dbEnv}
                                 onChange={(e) => setDbEnv(e.target.value)}
                                 disabled={!!hostedUrl}
+                                className="h-10"
                               />
                             </div>
                           </div>
@@ -680,7 +686,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
 
                                 const deploymentPayload = {
                                   clusterId: selectedClusterId,
-                                  provider: deploymentProvider,
+                                  provider: CloudProvider.AWS,
                                   repositoryId: data.repositoryId,
                                   port: portNumber,
                                   usePrivateRegistry: repoPrivate,
