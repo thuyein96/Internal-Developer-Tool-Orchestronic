@@ -182,10 +182,10 @@ export default function RequestDetail({ slug }: { slug: string }) {
     enabled: deploymentOpen,
   })
 
-  // Filter clusters to show only AWS clusters
+  // Filter clusters to show only AWS clusters with valid IDs
   const filteredClusters =
     approvedClusters?.filter(
-      (cluster) => cluster.cloudProvider === CloudProvider.AWS
+      (cluster) => cluster.cloudProvider === CloudProvider.AWS && cluster.id
     ) ?? []
 
   const deployMutation = useMutation({
