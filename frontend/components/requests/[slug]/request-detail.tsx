@@ -87,6 +87,7 @@ import {
 // import { RepositoryStatus } from "@/types/repo"
 import { AwsRequestDetail, AzureRequestDetail } from "@/types/request"
 import { CloudProvider } from "@/types/resource"
+import Image from "next/image"
 
 // const AirflowLogs = lazy(() => import("./airflow-logs"))
 
@@ -516,22 +517,15 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                 <Cloud className="h-3.5 w-3.5" />
                                 Provider
                               </Label>
-                              <Select
-                                value={deploymentProvider}
-                                onValueChange={(v) =>
-                                  setDeploymentProvider(v as CloudProvider)
-                                }
-                                disabled={!!hostedUrl}
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select provider" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value={CloudProvider.AWS}>
-                                    AWS
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
+                              <div className="flex items-center gap-2 h-9 px-3 py-2 border rounded-md bg-white dark:bg-transparent">
+                                <Image
+                                  src="/icon/aws.svg"
+                                  width={16}
+                                  height={16}
+                                  alt="AWS Icon"
+                                />
+                                <span className="text-sm">AWS</span>
+                              </div>
                             </div>
 
                             <div className="grid gap-2">
