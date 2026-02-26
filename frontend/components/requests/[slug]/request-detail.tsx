@@ -99,7 +99,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
   const [deploymentOpen, setDeploymentOpen] = useState(false)
   const [selectedClusterId, setSelectedClusterId] = useState<string>("")
   const [deploymentProvider, setDeploymentProvider] = useState<CloudProvider>(
-    CloudProvider.AZURE
+    CloudProvider.AWS
   )
   const [deploymentPort, setDeploymentPort] = useState<string>("80")
   const [repoPrivate, setRepoPrivate] = useState(false)
@@ -141,12 +141,9 @@ export default function RequestDetail({ slug }: { slug: string }) {
         setHostedUrl(response.hostedUrl)
 
         // Store deployment info for pre-filling form
-        const clusterId = response.AwsK8sClusterId || response.AzureK8sClusterId
+        const clusterId = response.AwsK8sClusterId
         if (clusterId) {
-          const provider = response.AwsK8sClusterId
-            ? CloudProvider.AWS
-            : CloudProvider.AZURE
-          setDeploymentInfo({ clusterId, provider })
+          setDeploymentInfo({ clusterId, provider: CloudProvider.AWS })
         }
 
         return response
@@ -213,13 +210,9 @@ export default function RequestDetail({ slug }: { slug: string }) {
           console.log("Hosted URL:", addressResponse.hostedUrl)
 
           // Store deployment info
-          const clusterId =
-            addressResponse.AwsK8sClusterId || addressResponse.AzureK8sClusterId
+          const clusterId = addressResponse.AwsK8sClusterId
           if (clusterId) {
-            const provider = addressResponse.AwsK8sClusterId
-              ? CloudProvider.AWS
-              : CloudProvider.AZURE
-            setDeploymentInfo({ clusterId, provider })
+            setDeploymentInfo({ clusterId, provider: CloudProvider.AWS })
           }
         } catch {
           console.log("Hosted URL not available yet")
@@ -534,9 +527,6 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                   <SelectValue placeholder="Select provider" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value={CloudProvider.AZURE}>
-                                    Azure
-                                  </SelectItem>
                                   <SelectItem value={CloudProvider.AWS}>
                                     AWS
                                   </SelectItem>
