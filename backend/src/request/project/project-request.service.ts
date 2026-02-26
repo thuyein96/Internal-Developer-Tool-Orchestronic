@@ -45,6 +45,109 @@ export class ProjectRequestService {
     private readonly cloudflareService: CloudflareService,
   ) {}
 
+  private sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private async waitForClusterDagConsumerTask(
+    dagId: string,
+    dagRunId: string,
+    timeoutMs = 20000,
+    pollIntervalMs = 1000,
+  ): Promise<'success' | 'failed' | 'timeout'> {
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < timeoutMs) {
+      try {
+        const tasks = await this.airflowService.getTaskInstances(dagId, dagRunId);
+        const consumerTask = (tasks ?? []).find(
+          (task: any) => task?.task_id === 'get_resource_id',
+        );
+
+        if (!consumerTask) {
+          await this.sleep(pollIntervalMs);
+          continue;
+        }
+
+        const state = consumerTask.state as string | undefined;
+
+        if (state === 'success') return 'success';
+
+        if (
+          state === 'failed' ||
+          state === 'upstream_failed' ||
+          state === 'removed'
+        ) {
+          return 'failed';
+        }
+
+        // Let Airflow retrying/scheduling states continue.
+        await this.sleep(pollIntervalMs);
+        continue;
+      } catch {
+        // DAG run/task instances may not be visible immediately after trigger.
+        await this.sleep(pollIntervalMs);
+      }
+    }
+
+    return 'timeout';
+  }
+
+  private async triggerClusterProvisionDagWithRetry(
+    user: BackendJwtPayload,
+    dagId: string,
+    resourceId: string,
+    maxAttempts = 3,
+  ) {
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        this.rabbitmqService.queueResource(resourceId);
+
+        // Add jitter to reduce simultaneous consumers colliding on the shared queue.
+        const jitterMs = 300 + Math.floor(Math.random() * 1200);
+        await this.sleep(jitterMs);
+
+        const dagRun = await this.airflowService.triggerDag(user, dagId);
+        const dagRunId = dagRun?.dag_run_id;
+
+        if (!dagRunId) {
+          throw new BadRequestException(
+            `Airflow trigger succeeded without dag_run_id for ${dagId}`,
+          );
+        }
+
+        const consumerTaskState = await this.waitForClusterDagConsumerTask(
+          dagId,
+          dagRunId,
+        );
+
+        if (consumerTaskState === 'success') {
+          return dagRun;
+        }
+
+        if (consumerTaskState === 'timeout') {
+          // Do not retrigger aggressively if Airflow is slow; preserve the in-flight run.
+          return dagRun;
+        }
+
+        throw new BadRequestException(
+          `Airflow consumer task get_resource_id failed for ${dagId} (attempt ${attempt}/${maxAttempts})`,
+        );
+      } catch (error) {
+        lastError = error;
+        if (attempt === maxAttempts) break;
+
+        // Backoff before requeue + retrigger.
+        const backoffMs = attempt * 1000 + Math.floor(Math.random() * 1000);
+        await this.sleep(backoffMs);
+      }
+    }
+
+    throw lastError;
+  }
+
   // async createProjectRequest(
   //   user: BackendJwtPayload,
   //   request: CreateProjectRequestDto
@@ -284,26 +387,22 @@ export class ProjectRequestService {
       updateClusterDto.status === Status.Approved &&
       resource.cloudProvider === CloudProvider.AZURE
     ) {
-      // Send resource ID to RabbitMQ first, then trigger Airflow
-      // to avoid race condition where Airflow starts before the ID is available
-      await Promise.all([
-        this.rabbitmqService.queueResource(clusterRequest.resourceId),
-        new Promise((resolve) => setTimeout(resolve, 4000)),
-        this.airflowService.triggerDag(user, 'AZURE_Resource_Group_Cluster'),
-      ]);
+      await this.triggerClusterProvisionDagWithRetry(
+        user,
+        'AZURE_Resource_Group_Cluster',
+        clusterRequest.resourceId,
+      );
     }
 
     if (
       updateClusterDto.status === Status.Approved &&
       resource.cloudProvider === CloudProvider.AWS
     ) {
-      // Send resource ID to RabbitMQ first, then trigger Airflow
-      // to avoid race condition where Airflow starts before the ID is available
-      await Promise.all([
-        this.rabbitmqService.queueResource(clusterRequest.resourceId),
-        new Promise((resolve) => setTimeout(resolve, 4000)),
-        this.airflowService.triggerDag(user, 'AWS_Resources_Cluster'),
-      ]);
+      await this.triggerClusterProvisionDagWithRetry(
+        user,
+        'AWS_Resources_Cluster',
+        clusterRequest.resourceId,
+      );
     }
 
     const clusterResponse = new CreateClusterAzureResponseDto();
