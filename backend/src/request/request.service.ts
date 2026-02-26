@@ -456,12 +456,14 @@ export class RequestService {
       const cloudProvider = resourceInfo.cloudProvider;
 
       // 1️⃣1️⃣ Trigger CI/CD + cloud provisioning
+      // Send request ID to RabbitMQ first, then trigger Airflow
+      // to avoid race condition where Airflow starts before the ID is available
       if (cloudProvider === CloudProvider.AWS) {
-        this.rabbitmqService.queueRequest(id);
-        this.airflowService.triggerDag(user, 'AWS_Resources');
+        await this.rabbitmqService.queueRequest(id);
+        await this.airflowService.triggerDag(user, 'AWS_Resources');
       } else if (cloudProvider === CloudProvider.AZURE) {
-        this.rabbitmqService.queueRequest(id);
-        this.airflowService.triggerDag(user, 'AZURE_Resource_Group');
+        await this.rabbitmqService.queueRequest(id);
+        await this.airflowService.triggerDag(user, 'AZURE_Resource_Group');
       } else {
         throw new Error(`Unsupported cloudProvider: ${cloudProvider}`);
       }

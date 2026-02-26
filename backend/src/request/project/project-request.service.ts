@@ -284,20 +284,20 @@ export class ProjectRequestService {
       updateClusterDto.status === Status.Approved &&
       resource.cloudProvider === CloudProvider.AZURE
     ) {
-      await Promise.all([
-        this.rabbitmqService.queueResource(clusterRequest.resourceId),
-        this.airflowService.triggerDag(user, 'AZURE_Resource_Group_Cluster'),
-      ]);
+      // Send resource ID to RabbitMQ first, then trigger Airflow
+      // to avoid race condition where Airflow starts before the ID is available
+      await this.rabbitmqService.queueResource(clusterRequest.resourceId);
+      await this.airflowService.triggerDag(user, 'AZURE_Resource_Group_Cluster');
     }
 
     if (
       updateClusterDto.status === Status.Approved &&
       resource.cloudProvider === CloudProvider.AWS
     ) {
-      await Promise.all([
-        this.rabbitmqService.queueResource(clusterRequest.resourceId),
-        this.airflowService.triggerDag(user, 'AWS_Resources_Cluster'),
-      ]);
+      // Send resource ID to RabbitMQ first, then trigger Airflow
+      // to avoid race condition where Airflow starts before the ID is available
+      await this.rabbitmqService.queueResource(clusterRequest.resourceId);
+      await this.airflowService.triggerDag(user, 'AWS_Resources_Cluster');
     }
 
     const clusterResponse = new CreateClusterAzureResponseDto();
