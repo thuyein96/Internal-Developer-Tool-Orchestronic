@@ -288,7 +288,7 @@ export class ProjectRequestService {
       // to avoid race condition where Airflow starts before the ID is available
       await Promise.all([
         this.rabbitmqService.queueResource(clusterRequest.resourceId),
-        new Promise((resolve) => setTimeout(resolve, 2000)),
+        new Promise((resolve) => setTimeout(resolve, 4000)),
         this.airflowService.triggerDag(user, 'AZURE_Resource_Group_Cluster'),
       ]);
     }
@@ -301,7 +301,7 @@ export class ProjectRequestService {
       // to avoid race condition where Airflow starts before the ID is available
       await Promise.all([
         this.rabbitmqService.queueResource(clusterRequest.resourceId),
-        new Promise((resolve) => setTimeout(resolve, 2000)),
+        new Promise((resolve) => setTimeout(resolve, 4000)),
         this.airflowService.triggerDag(user, 'AWS_Resources_Cluster'),
       ]);
     }
