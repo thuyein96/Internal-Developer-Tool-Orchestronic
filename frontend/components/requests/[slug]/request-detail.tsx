@@ -594,9 +594,9 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                 {filteredClusters.map((cluster) => (
                                   <SelectItem
                                     key={cluster.id}
-                                    value={cluster.id}
+                                    value={cluster.id!}
                                   >
-                                    {cluster.name} ({cluster.region})
+                                    {cluster.name ?? "Unnamed"} ({cluster.region})
                                   </SelectItem>
                                 ))}
                               </SelectContent>

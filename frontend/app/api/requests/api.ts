@@ -239,8 +239,8 @@ export async function createCluster(
 
 export interface ClusterResource {
   clusterRequestId?: string
-  id: string
-  name: string
+  id?: string
+  name?: string
   region: string
   resourceConfigId: string
   cloudProvider: "AZURE" | "AWS"
