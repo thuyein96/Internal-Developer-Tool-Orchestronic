@@ -286,8 +286,11 @@ export class ProjectRequestService {
     ) {
       // Send resource ID to RabbitMQ first, then trigger Airflow
       // to avoid race condition where Airflow starts before the ID is available
-      await this.rabbitmqService.queueResource(clusterRequest.resourceId);
-      await this.airflowService.triggerDag(user, 'AZURE_Resource_Group_Cluster');
+      await Promise.all([
+        this.rabbitmqService.queueResource(clusterRequest.resourceId),
+        new Promise((resolve) => setTimeout(resolve, 2000)),
+        this.airflowService.triggerDag(user, 'AZURE_Resource_Group_Cluster'),
+      ]);
     }
 
     if (
@@ -296,8 +299,11 @@ export class ProjectRequestService {
     ) {
       // Send resource ID to RabbitMQ first, then trigger Airflow
       // to avoid race condition where Airflow starts before the ID is available
-      await this.rabbitmqService.queueResource(clusterRequest.resourceId);
-      await this.airflowService.triggerDag(user, 'AWS_Resources_Cluster');
+      await Promise.all([
+        this.rabbitmqService.queueResource(clusterRequest.resourceId),
+        new Promise((resolve) => setTimeout(resolve, 2000)),
+        this.airflowService.triggerDag(user, 'AWS_Resources_Cluster'),
+      ]);
     }
 
     const clusterResponse = new CreateClusterAzureResponseDto();

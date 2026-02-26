@@ -459,13 +459,21 @@ export class RequestService {
       // Send request ID to RabbitMQ first, then trigger Airflow
       // to avoid race condition where Airflow starts before the ID is available
       if (cloudProvider === CloudProvider.AWS) {
+        await Promise.all([
+          this.rabbitmqService.queueRequest(id),
+          new Promise((resolve) => setTimeout(resolve, 2000)),
+          this.airflowService.triggerDag(user, 'AWS_Resources'); // 2 second delay
+        ]);
+      }
         await this.rabbitmqService.queueRequest(id);
         await new Promise(resolve => setTimeout(resolve, 2000)); // 1 second delay
         await this.airflowService.triggerDag(user, 'AWS_Resources');
       } else if (cloudProvider === CloudProvider.AZURE) {
-        await this.rabbitmqService.queueRequest(id);
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 1 second delay
-        await this.airflowService.triggerDag(user, 'AZURE_Resource_Group');
+        await Promise.all([
+          this.rabbitmqService.queueRequest(id),
+          new Promise((resolve) => setTimeout(resolve, 2000)),
+          this.airflowService.triggerDag(user, 'AZURE_Resource_Group'),
+        ]);
       } else {
         throw new Error(`Unsupported cloudProvider: ${cloudProvider}`);
       }
