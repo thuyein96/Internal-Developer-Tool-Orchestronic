@@ -462,7 +462,7 @@ export class RequestService {
         await Promise.all([
           this.rabbitmqService.queueRequest(id),
           new Promise((resolve) => setTimeout(resolve, 2000)),
-          this.airflowService.triggerDag(user, 'AWS_Resources'); // 2 second delay
+          this.airflowService.triggerDag(user, 'AWS_Resources') // 2 second delay
         ]);
       } else if (cloudProvider === CloudProvider.AZURE) {
         await Promise.all([
