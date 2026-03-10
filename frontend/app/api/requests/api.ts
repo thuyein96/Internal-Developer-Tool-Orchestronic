@@ -335,6 +335,19 @@ export async function getUserAllApprovedClusters(): Promise<ClusterResource[]> {
   )
 }
 
+export async function getUserAllPendingClusters(): Promise<ClusterResource[]> {
+  return fetcher(
+    `${process.env.NEXT_PUBLIC_API_URL}/project/me/pending-clusters`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+}
+
 export interface UpdateClusterStatusRequest {
   clusterRequestId: string
   status: "Pending" | "Approved" | "Rejected"

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import {
   getClustersByStatus,
-  getUserClustersByStatus,
+  // getUserClustersByStatus, // Commented out: /project/me/cluster/{status} endpoint has error
+  getUserAllApprovedClusters,
+  getUserAllPendingClusters,
   ClusterResource,
 } from "@/app/api/requests/api"
 import DataTableSkeleton from "../../requests/components/data-table-skeleton"
@@ -46,18 +48,25 @@ export default function ClustersTable({ pageSize = 10 }: ClustersTableProps) {
       // Fetch clusters for all statuses
       const allClusters: ClusterResourceWithStatus[] = []
 
-      for (const status of Object.values(Status)) {
-        const clusters = isAdminOrIT
-          ? await getClustersByStatus(status)
-          : await getUserClustersByStatus(status)
-
-        // Inject status into each cluster object
-        const clustersWithStatus = clusters.map((cluster) => ({
-          ...cluster,
-          status: status,
-        })) as ClusterResourceWithStatus[]
-
-        allClusters.push(...clustersWithStatus)
+      if (isAdminOrIT) {
+        for (const status of Object.values(Status)) {
+          const clusters = await getClustersByStatus(status)
+          const clustersWithStatus = clusters.map((cluster) => ({
+            ...cluster,
+            status: status,
+          })) as ClusterResourceWithStatus[]
+          allClusters.push(...clustersWithStatus)
+        }
+      } else {
+        // Use working endpoints instead of /project/me/cluster/{status}
+        const [approved, pending] = await Promise.all([
+          getUserAllApprovedClusters(),
+          getUserAllPendingClusters(),
+        ])
+        allClusters.push(
+          ...approved.map((c) => ({ ...c, status: Status.Approved as Status })),
+          ...pending.map((c) => ({ ...c, status: Status.Pending as Status }))
+        )
       }
 
       console.log("All clusters received:", allClusters)
