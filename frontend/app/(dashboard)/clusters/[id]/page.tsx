@@ -30,9 +30,9 @@ import {
   ClusterDetail,
   ClusterResource,
   getClusterResources,
-  getUserAllApprovedClusters,
-  getUserAllPendingClusters,
+  getUserClustersByStatus,
 } from "@/app/api/requests/api"
+import { Status } from "@/types/api"
 
 export default function ClusterDetailPage() {
   const params = useParams()
@@ -40,16 +40,16 @@ export default function ClusterDetailPage() {
 
   // Fetch both approved and pending clusters to support viewing either
   const { data: approvedClusters, isLoading: isLoadingApproved } = useQuery({
-    queryKey: ["user-approved-clusters"],
-    queryFn: () => getUserAllApprovedClusters(),
+    queryKey: ["clusters", Status.Approved],
+    queryFn: () => getUserClustersByStatus(Status.Approved),
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   })
 
   const { data: pendingClusters, isLoading: isLoadingPending } = useQuery({
-    queryKey: ["user-pending-clusters"],
-    queryFn: () => getUserAllPendingClusters(),
+    queryKey: ["clusters", Status.Pending],
+    queryFn: () => getUserClustersByStatus(Status.Pending),
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,

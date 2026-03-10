@@ -1,7 +1,6 @@
 import {
   getClustersByStatus,
-  // getUserClustersByStatus, // Commented out: /project/me/cluster/{status} endpoint has error
-  getUserAllApprovedClusters,
+  getUserClustersByStatus,
 } from "@/app/api/requests/api"
 import { getUser } from "@/app/api/user/api"
 import ClustersTable from "./components/clusters-table"
@@ -49,7 +48,7 @@ export default async function ClustersPage() {
     queryFn: () =>
       isAdminOrIT
         ? getClustersByStatus(defaultStatus)
-        : getUserAllApprovedClusters(),
+        : getUserClustersByStatus(defaultStatus),
   })
 
   return (
