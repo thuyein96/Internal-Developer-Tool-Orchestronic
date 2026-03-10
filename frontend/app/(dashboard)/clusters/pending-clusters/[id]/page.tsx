@@ -42,10 +42,10 @@ import {
   ClusterDetail,
   ClusterResource,
   getClusterResources,
-  getPendingClusters,
-  getApprovedClusters,
+  getClustersByStatus,
   updateClusterStatus,
 } from "@/app/api/requests/api"
+import { Status } from "@/types/api"
 
 export default function PendingClusterDetailPage() {
   const params = useParams()
@@ -55,10 +55,10 @@ export default function PendingClusterDetailPage() {
 
   // Fetch both pending and approved clusters
   const { data: pendingClusters, isLoading: isLoadingPending } = useQuery({
-    queryKey: ["pending-clusters"],
+    queryKey: ["clusters", Status.Pending],
     queryFn: async () => {
       try {
-        return await getPendingClusters()
+        return await getClustersByStatus(Status.Pending)
       } catch {
         return []
       }
@@ -66,10 +66,10 @@ export default function PendingClusterDetailPage() {
   })
 
   const { data: approvedClusters, isLoading: isLoadingApproved } = useQuery({
-    queryKey: ["approved-clusters"],
+    queryKey: ["clusters", Status.Approved],
     queryFn: async () => {
       try {
-        return await getApprovedClusters()
+        return await getClustersByStatus(Status.Approved)
       } catch {
         return []
       }
