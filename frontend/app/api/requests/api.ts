@@ -246,14 +246,23 @@ export interface ClusterResource {
   cloudProvider: "AZURE" | "AWS"
 }
 
+export interface ResourceInfo {
+  id: string
+  name: string
+  region: string
+  resourceConfigId: string
+  cloudProvider: "AZURE" | "AWS"
+}
+
 export interface ClusterDetail {
   id: string
   clusterName: string
   nodeCount: number
   nodeSize: string
   kubeConfig: string | null
+  clusterEndpoint: string | null
   clusterFqdn: string | null
-  terraformState: string | null
+  terraformState: Record<string, unknown> | null
   resourceConfigId: string
   createdAt: string
   updatedAt: string
@@ -269,11 +278,26 @@ export async function getUserClusters(): Promise<ClusterResource[]> {
   })
 }
 
+export async function getResourceInfo(
+  clusterRequestId: string
+): Promise<ResourceInfo> {
+  return fetcher(
+    `${process.env.NEXT_PUBLIC_API_URL}/project/resources/${clusterRequestId}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+}
+
 export async function getClusterResources(
-  clusterId: string
+  clusterRequestId: string
 ): Promise<ClusterDetail[]> {
   return fetcher(
-    `${process.env.NEXT_PUBLIC_API_URL}/project/resource-config/${clusterId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/project/resource-config/${clusterRequestId}`,
     {
       method: "GET",
       credentials: "include",

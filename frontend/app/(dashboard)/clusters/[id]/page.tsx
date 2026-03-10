@@ -29,7 +29,9 @@ import { format } from "date-fns"
 import {
   ClusterDetail,
   ClusterResource,
+  ResourceInfo,
   getClusterResources,
+  getResourceInfo,
   getUserClusters,
 } from "@/app/api/requests/api"
 
@@ -52,20 +54,35 @@ export default function ClusterDetailPage() {
     refetchOnWindowFocus: true,
   })
 
-  const { data: resources, isLoading: isLoadingResources } = useQuery({
-    queryKey: ["cluster-resources", id],
+  const cluster = (clusters || []).find((c) => c.id === id)
+  // clusterRequestId maps to Resources.id in the backend
+  const clusterRequestId = cluster?.clusterRequestId
+
+  const { data: resourceInfo, isLoading: isLoadingResourceInfo } = useQuery({
+    queryKey: ["resource-info", clusterRequestId],
     queryFn: async () => {
       try {
-        return await getClusterResources(id)
+        return await getResourceInfo(clusterRequestId!)
+      } catch {
+        return null
+      }
+    },
+    enabled: !!clusterRequestId,
+  })
+
+  const { data: resources, isLoading: isLoadingResources } = useQuery({
+    queryKey: ["cluster-resources", clusterRequestId],
+    queryFn: async () => {
+      try {
+        return await getClusterResources(clusterRequestId!)
       } catch {
         return []
       }
     },
+    enabled: !!clusterRequestId,
   })
 
-  const cluster = (clusters || []).find((c) => c.id === id)
-
-  if (isLoadingClusters || isLoadingResources) {
+  if (isLoadingClusters || isLoadingResourceInfo || isLoadingResources) {
     return (
       <div className="hidden h-full flex-1 flex-col space-y-8 p-6 md:flex">
         <div className="animate-pulse space-y-4">
@@ -151,7 +168,10 @@ export default function ClusterDetailPage() {
 
           {/* Right side - Cluster info */}
           <div className="flex flex-col space-y-6">
-            <ClusterInfoCard cluster={cluster} />
+            <ClusterInfoCard
+              cluster={cluster}
+              resourceInfo={resourceInfo ?? undefined}
+            />
           </div>
         </div>
       </div>
@@ -252,7 +272,14 @@ function ClusterResourceCard({ resource }: { resource: ClusterDetail }) {
   )
 }
 
-function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
+function ClusterInfoCard({
+  cluster,
+  resourceInfo,
+}: {
+  cluster: ClusterResource
+  resourceInfo?: ResourceInfo
+}) {
+  const displayData = resourceInfo ?? cluster
   return (
     <Card>
       <CardHeader>
@@ -270,10 +297,10 @@ function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
             </p>
             <Badge
               variant={
-                cluster.cloudProvider === "AZURE" ? "default" : "secondary"
+                displayData.cloudProvider === "AZURE" ? "default" : "secondary"
               }
             >
-              {cluster.cloudProvider}
+              {displayData.cloudProvider}
             </Badge>
           </div>
 
@@ -282,7 +309,7 @@ function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
               <MapPin className="h-3 w-3" />
               Region
             </p>
-            <p className="text-lg font-semibold">{cluster.region}</p>
+            <p className="text-lg font-semibold">{displayData.region}</p>
           </div>
 
           <div className="space-y-1">
@@ -290,7 +317,7 @@ function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
               Resource Config ID
             </p>
             <p className="text-xs font-mono break-all text-muted-foreground">
-              {cluster.resourceConfigId}
+              {displayData.resourceConfigId}
             </p>
           </div>
         </div>

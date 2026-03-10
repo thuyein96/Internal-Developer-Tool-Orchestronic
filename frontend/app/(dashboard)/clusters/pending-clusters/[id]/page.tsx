@@ -41,8 +41,10 @@ import { buttonVariants } from "@/components/ui/button"
 import {
   ClusterDetail,
   ClusterResource,
+  ResourceInfo,
   getClusterResources,
   getClustersByStatus,
+  getResourceInfo,
   updateClusterStatus,
 } from "@/app/api/requests/api"
 import { Status } from "@/types/api"
@@ -53,7 +55,23 @@ export default function PendingClusterDetailPage() {
   const queryClient = useQueryClient()
   const id = params.id as string
 
-  // Fetch both pending and approved clusters
+  // Fetch all clusters across all statuses (same as the table)
+  const { data: allClustersData, isLoading: isLoadingClusters } = useQuery({
+    queryKey: ["clusters", "all-admin"],
+    queryFn: async () => {
+      const results: ClusterResource[] = []
+      for (const status of Object.values(Status)) {
+        try {
+          const clusters = await getClustersByStatus(status)
+          results.push(...clusters)
+        } catch {
+          // Some statuses may have no clusters
+        }
+      }
+      return results
+    },
+  })
+
   const { data: pendingClusters, isLoading: isLoadingPending } = useQuery({
     queryKey: ["clusters", Status.Pending],
     queryFn: async () => {
@@ -65,15 +83,16 @@ export default function PendingClusterDetailPage() {
     },
   })
 
-  const { data: approvedClusters, isLoading: isLoadingApproved } = useQuery({
-    queryKey: ["clusters", Status.Approved],
+  const { data: resourceInfo, isLoading: isLoadingResourceInfo } = useQuery({
+    queryKey: ["resource-info", id],
     queryFn: async () => {
       try {
-        return await getClustersByStatus(Status.Approved)
+        return await getResourceInfo(id)
       } catch {
-        return []
+        return null
       }
     },
+    enabled: !!id,
   })
 
   const { data: resources, isLoading: isLoadingResources } = useQuery({
@@ -124,13 +143,15 @@ export default function PendingClusterDetailPage() {
     },
   })
 
-  // Combine both pending and approved clusters to find the right one
-  const allClusters = [...(pendingClusters || []), ...(approvedClusters || [])]
-
-  const cluster = allClusters.find((c) => c.id === id)
+  // Find the cluster from all fetched clusters
+  const cluster = (allClustersData || []).find((c) => c.id === id)
   const isPending = pendingClusters?.some((c) => c.id === id)
 
-  const isLoading = isLoadingPending || isLoadingApproved || isLoadingResources
+  const isLoading =
+    isLoadingClusters ||
+    isLoadingPending ||
+    isLoadingResourceInfo ||
+    isLoadingResources
 
   if (isLoading) {
     return (
@@ -310,7 +331,10 @@ export default function PendingClusterDetailPage() {
 
           {/* Right side - Cluster info */}
           <div className="flex flex-col space-y-6">
-            <ClusterInfoCard cluster={cluster} />
+            <ClusterInfoCard
+              cluster={cluster}
+              resourceInfo={resourceInfo ?? undefined}
+            />
           </div>
         </div>
       </div>
@@ -411,7 +435,14 @@ function ClusterResourceCard({ resource }: { resource: ClusterDetail }) {
   )
 }
 
-function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
+function ClusterInfoCard({
+  cluster,
+  resourceInfo,
+}: {
+  cluster: ClusterResource
+  resourceInfo?: ResourceInfo
+}) {
+  const displayData = resourceInfo ?? cluster
   return (
     <Card>
       <CardHeader>
@@ -429,10 +460,10 @@ function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
             </p>
             <Badge
               variant={
-                cluster.cloudProvider === "AZURE" ? "default" : "secondary"
+                displayData.cloudProvider === "AZURE" ? "default" : "secondary"
               }
             >
-              {cluster.cloudProvider}
+              {displayData.cloudProvider}
             </Badge>
           </div>
 
@@ -441,7 +472,7 @@ function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
               <MapPin className="h-3 w-3" />
               Region
             </p>
-            <p className="text-lg font-semibold">{cluster.region}</p>
+            <p className="text-lg font-semibold">{displayData.region}</p>
           </div>
 
           <div className="space-y-1">
@@ -449,7 +480,7 @@ function ClusterInfoCard({ cluster }: { cluster: ClusterResource }) {
               Resource Config ID
             </p>
             <p className="text-xs font-mono break-all text-muted-foreground">
-              {cluster.resourceConfigId}
+              {displayData.resourceConfigId}
             </p>
           </div>
         </div>
