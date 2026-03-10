@@ -7,7 +7,7 @@ import {
   getClustersByStatus,
   // getUserClustersByStatus, // Commented out: /project/me/cluster/{status} endpoint has error
   getUserAllApprovedClusters,
-  getUserAllPendingClusters,
+  getUserClusters,
   ClusterResource,
 } from "@/app/api/requests/api"
 import DataTableSkeleton from "../../requests/components/data-table-skeleton"
@@ -50,22 +50,31 @@ export default function ClustersTable({ pageSize = 10 }: ClustersTableProps) {
 
       if (isAdminOrIT) {
         for (const status of Object.values(Status)) {
-          const clusters = await getClustersByStatus(status)
-          const clustersWithStatus = clusters.map((cluster) => ({
-            ...cluster,
-            status: status,
-          })) as ClusterResourceWithStatus[]
-          allClusters.push(...clustersWithStatus)
+          try {
+            const clusters = await getClustersByStatus(status)
+            const clustersWithStatus = clusters.map((cluster) => ({
+              ...cluster,
+              status: status,
+            })) as ClusterResourceWithStatus[]
+            allClusters.push(...clustersWithStatus)
+          } catch {
+            // Status endpoint may return error for empty results
+          }
         }
       } else {
-        // Use working endpoints instead of /project/me/cluster/{status}
-        const [approved, pending] = await Promise.all([
-          getUserAllApprovedClusters(),
-          getUserAllPendingClusters(),
+        // Use working endpoints: /project/me/cluster and /project/me/approved-clusters
+        const [allClustersData, approvedData] = await Promise.all([
+          getUserClusters().catch(() => [] as ClusterResource[]),
+          getUserAllApprovedClusters().catch(() => [] as ClusterResource[]),
         ])
+        const approvedIds = new Set(approvedData.map((c) => c.id))
         allClusters.push(
-          ...approved.map((c) => ({ ...c, status: Status.Approved as Status })),
-          ...pending.map((c) => ({ ...c, status: Status.Pending as Status }))
+          ...allClustersData.map((c) => ({
+            ...c,
+            status: approvedIds.has(c.id)
+              ? (Status.Approved as Status)
+              : (Status.Pending as Status),
+          }))
         )
       }
 

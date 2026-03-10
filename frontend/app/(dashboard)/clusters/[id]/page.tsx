@@ -30,26 +30,23 @@ import {
   ClusterDetail,
   ClusterResource,
   getClusterResources,
-  getUserAllApprovedClusters,
-  getUserAllPendingClusters,
+  getUserClusters,
 } from "@/app/api/requests/api"
 
 export default function ClusterDetailPage() {
   const params = useParams()
   const id = params.id as string
 
-  // Fetch both approved and pending clusters to support viewing either
-  const { data: approvedClusters, isLoading: isLoadingApproved } = useQuery({
-    queryKey: ["user-approved-clusters"],
-    queryFn: () => getUserAllApprovedClusters(),
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-  })
-
-  const { data: pendingClusters, isLoading: isLoadingPending } = useQuery({
-    queryKey: ["user-pending-clusters"],
-    queryFn: () => getUserAllPendingClusters(),
+  // Fetch all user clusters using the working /project/me/cluster endpoint
+  const { data: clusters, isLoading: isLoadingClusters } = useQuery({
+    queryKey: ["user-clusters"],
+    queryFn: async () => {
+      try {
+        return await getUserClusters()
+      } catch {
+        return []
+      }
+    },
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -57,12 +54,16 @@ export default function ClusterDetailPage() {
 
   const { data: resources, isLoading: isLoadingResources } = useQuery({
     queryKey: ["cluster-resources", id],
-    queryFn: () => getClusterResources(id),
+    queryFn: async () => {
+      try {
+        return await getClusterResources(id)
+      } catch {
+        return []
+      }
+    },
   })
 
-  const isLoadingClusters = isLoadingApproved || isLoadingPending
-  const clusters = [...(approvedClusters || []), ...(pendingClusters || [])]
-  const cluster = clusters.find((c) => c.id === id)
+  const cluster = (clusters || []).find((c) => c.id === id)
 
   if (isLoadingClusters || isLoadingResources) {
     return (

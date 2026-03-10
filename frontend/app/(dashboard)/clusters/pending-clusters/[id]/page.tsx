@@ -56,17 +56,35 @@ export default function PendingClusterDetailPage() {
   // Fetch both pending and approved clusters
   const { data: pendingClusters, isLoading: isLoadingPending } = useQuery({
     queryKey: ["pending-clusters"],
-    queryFn: getPendingClusters,
+    queryFn: async () => {
+      try {
+        return await getPendingClusters()
+      } catch {
+        return []
+      }
+    },
   })
 
   const { data: approvedClusters, isLoading: isLoadingApproved } = useQuery({
     queryKey: ["approved-clusters"],
-    queryFn: getApprovedClusters,
+    queryFn: async () => {
+      try {
+        return await getApprovedClusters()
+      } catch {
+        return []
+      }
+    },
   })
 
   const { data: resources, isLoading: isLoadingResources } = useQuery({
     queryKey: ["cluster-resources", id],
-    queryFn: () => getClusterResources(id),
+    queryFn: async () => {
+      try {
+        return await getClusterResources(id)
+      } catch {
+        return []
+      }
+    },
     enabled: !!id,
   })
 
