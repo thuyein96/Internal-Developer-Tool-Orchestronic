@@ -30,9 +30,9 @@ import {
   ClusterDetail,
   ClusterResource,
   getClusterResources,
-  getUserClustersByStatus,
+  getUserAllApprovedClusters,
+  getUserAllPendingClusters,
 } from "@/app/api/requests/api"
-import { Status } from "@/types/api"
 
 export default function ClusterDetailPage() {
   const params = useParams()
@@ -40,16 +40,16 @@ export default function ClusterDetailPage() {
 
   // Fetch both approved and pending clusters to support viewing either
   const { data: approvedClusters, isLoading: isLoadingApproved } = useQuery({
-    queryKey: ["clusters", Status.Approved],
-    queryFn: () => getUserClustersByStatus(Status.Approved),
+    queryKey: ["user-approved-clusters"],
+    queryFn: () => getUserAllApprovedClusters(),
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   })
 
   const { data: pendingClusters, isLoading: isLoadingPending } = useQuery({
-    queryKey: ["clusters", Status.Pending],
-    queryFn: () => getUserClustersByStatus(Status.Pending),
+    queryKey: ["user-pending-clusters"],
+    queryFn: () => getUserAllPendingClusters(),
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -137,10 +137,7 @@ export default function ClusterDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {resources && resources.length > 0 ? (
               resources.map((resource) => (
-                <ClusterResourceCard
-                  key={resource.id}
-                  resource={resource}
-                />
+                <ClusterResourceCard key={resource.id} resource={resource} />
               ))
             ) : (
               <div className="text-center p-8 border rounded-lg">
@@ -162,11 +159,7 @@ export default function ClusterDetailPage() {
 }
 
 // Inline Components
-function ClusterResourceCard({
-  resource,
-}: {
-  resource: ClusterDetail
-}) {
+function ClusterResourceCard({ resource }: { resource: ClusterDetail }) {
   const isConfigured = resource.kubeConfig !== null
 
   return (

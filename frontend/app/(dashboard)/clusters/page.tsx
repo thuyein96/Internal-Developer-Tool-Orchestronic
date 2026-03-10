@@ -1,6 +1,7 @@
 import {
   getClustersByStatus,
-  getUserClustersByStatus,
+  // getUserClustersByStatus, // Commented out: /project/me/cluster/{status} endpoint has error
+  getUserAllApprovedClusters,
 } from "@/app/api/requests/api"
 import { getUser } from "@/app/api/user/api"
 import ClustersTable from "./components/clusters-table"
@@ -32,7 +33,7 @@ async function getUserRole(): Promise<Role | null> {
 export default async function ClustersPage() {
   const queryClient = new QueryClient()
   const userRole = await getUserRole()
-  
+
   const isAdminOrIT = userRole === Role.Admin || userRole === Role.IT
   const defaultStatus: Status = Status.Approved
 
@@ -48,7 +49,7 @@ export default async function ClustersPage() {
     queryFn: () =>
       isAdminOrIT
         ? getClustersByStatus(defaultStatus)
-        : getUserClustersByStatus(defaultStatus),
+        : getUserAllApprovedClusters(),
   })
 
   return (
