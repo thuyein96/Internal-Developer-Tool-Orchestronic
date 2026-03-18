@@ -36,4 +36,12 @@ export class CreateClusterDeploymentRequestDto {
         example: 'apiVersion: v1\nclusters:\n- cluster:\n    certificate-authority-data: ...',
     })
     kubeConfig: KubeConfig;
+
+    @ApiProperty({
+        description: 'Number of replicas for the deployment',
+        example: 3,
+        required: false,
+    })
+    @IsOptional()
+    replicas?: number;
 }

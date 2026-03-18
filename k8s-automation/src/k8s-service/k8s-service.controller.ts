@@ -19,7 +19,7 @@ export class KubernetesController {
   @Post('initialize')
   async initializeK8s(
     @Body()
-    { name, host, image, port, usePrivateRegistry, kubeConfig }: { name: string; host: string, image: string; port: number; usePrivateRegistry: boolean; kubeConfig: KubeConfigObject },
+    { name, host, image, port, usePrivateRegistry, kubeConfig, replicas }: { name: string; host: string, image: string; port: number; usePrivateRegistry: boolean; kubeConfig: KubeConfigObject; replicas?: number },
   ): Promise<any> {
     if (name === undefined || image === undefined || port === undefined || usePrivateRegistry === undefined)
       throw new BadRequestException('Invalid Request, Parameters missing');
@@ -32,6 +32,7 @@ export class KubernetesController {
       image: image,
       usePrivateRegistry,
       kubeConfig: kubeConfigString,
+      replicas: replicas
     });
     
     if (!deployment.success) throw new BadRequestException(deployment.message);
@@ -59,7 +60,7 @@ export class KubernetesController {
 
   @Post('create-deployment')
   async createDeployment(
-    @Body() { name, image, usePrivateRegistry, kubeConfig }: { name: string; image: string; usePrivateRegistry: boolean; kubeConfig: string },
+    @Body() { name, image, usePrivateRegistry, kubeConfig, replicas }: { name: string; image: string; usePrivateRegistry: boolean; kubeConfig: string; replicas?: number },
   ) {
     try {
       const result = await this.kubernetesService.createDeployment({
@@ -67,6 +68,7 @@ export class KubernetesController {
         image: image,
         usePrivateRegistry,
         kubeConfig: kubeConfig,
+        replicas: replicas
       });
       return {
         success: true,

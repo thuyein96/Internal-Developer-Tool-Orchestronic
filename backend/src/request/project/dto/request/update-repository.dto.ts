@@ -35,4 +35,13 @@ export class AddRepositoryToK8sClusterDto {
     required: false,
   })
   usePrivateRegistry?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({
+    description: 'Number of replicas for the deployment',
+    example: 3,
+    required: false,
+  })
+  replicas?: number;
 }

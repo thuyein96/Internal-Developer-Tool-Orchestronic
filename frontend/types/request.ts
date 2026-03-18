@@ -198,6 +198,7 @@ export interface DeploymentDto {
   provider: CloudProvider
   repositoryId: string
   port: number
+  replicas?: number
   usePrivateRegistry: boolean
   vmEnv?: string
   storageEnv?: string

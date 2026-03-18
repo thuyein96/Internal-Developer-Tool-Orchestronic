@@ -47,11 +47,13 @@ export class KubernetesService {
     image,
     usePrivateRegistry,
     kubeConfig,
+    replicas,
   }: {
     name: string;
     image: string;
     usePrivateRegistry: boolean;
     kubeConfig: string;
+    replicas?: number;
   }): Promise<any> {
     // Always reinitialize to use the correct kubeconfig for each request
     await this.initializeK8sClient(kubeConfig);
@@ -66,7 +68,7 @@ export class KubernetesService {
             app: `${name}`,
           },
         },
-        replicas: 1,
+        replicas: replicas || 1,
         template: {
           metadata: {
             labels: {

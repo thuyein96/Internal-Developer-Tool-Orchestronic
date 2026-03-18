@@ -621,6 +621,7 @@ export class ProjectRequestService {
           deploymentRequest.usePrivateRegistry =
             request.usePrivateRegistry ?? false;
           deploymentRequest.kubeConfig = kubeConfig;
+          deploymentRequest.replicas = request.replicas ?? 1;
 
           console.log('Deployment Request:', deploymentRequest);
           const deploymentResponse =
@@ -743,6 +744,7 @@ export class ProjectRequestService {
           deploymentRequest.usePrivateRegistry =
             request.usePrivateRegistry ?? false;
           deploymentRequest.kubeConfig = kubeConfigObject;
+          deploymentRequest.replicas = request.replicas ?? 1;
 
           console.log('Deployment Request:', deploymentRequest);
           const deploymentResponse =

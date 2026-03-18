@@ -101,6 +101,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
   const [deploymentOpen, setDeploymentOpen] = useState(false)
   const [selectedClusterId, setSelectedClusterId] = useState<string>("")
   const [deploymentPort, setDeploymentPort] = useState<string>("80")
+  const [deploymentReplicas, setDeploymentReplicas] = useState<string>("1")
   const [repoPrivate, setRepoPrivate] = useState(false)
   const [vmEnv, setVmEnv] = useState<string>("")
   const [storageEnv, setStorageEnv] = useState<string>("")
@@ -118,6 +119,9 @@ export default function RequestDetail({ slug }: { slug: string }) {
   const portNumber = Number.parseInt(deploymentPort, 10)
   const isPortValid =
     Number.isInteger(portNumber) && portNumber > 0 && portNumber <= 65535
+  const replicasNumber = Number.parseInt(deploymentReplicas, 10)
+  const isReplicasValid =
+    Number.isInteger(replicasNumber) && replicasNumber > 0
 
   const { data, isLoading, error } = useQuery<
     AzureRequestDetail | AwsRequestDetail
@@ -513,7 +517,7 @@ export default function RequestDetail({ slug }: { slug: string }) {
                               Infrastructure Settings
                             </span>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="grid gap-2">
                               <Label className="flex items-center gap-1.5">
                                 <Cloud className="h-3.5 w-3.5" />
@@ -574,6 +578,30 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                   disabled={!!hostedUrl}
                                 />
                               </div>
+                            </div>
+
+                            <div className="grid gap-2">
+                              <Label
+                                htmlFor="deployment-replicas"
+                                className="flex items-center gap-1.5"
+                              >
+                                <Server className="h-3.5 w-3.5" />
+                                Replicas
+                              </Label>
+                              <Input
+                                id="deployment-replicas"
+                                type="number"
+                                inputMode="numeric"
+                                min={1}
+                                step={1}
+                                placeholder="1"
+                                value={deploymentReplicas}
+                                onChange={(e) =>
+                                  setDeploymentReplicas(e.target.value)
+                                }
+                                disabled={!!hostedUrl}
+                                className="h-10"
+                              />
                             </div>
                           </div>
 
@@ -684,11 +712,21 @@ export default function RequestDetail({ slug }: { slug: string }) {
                                   return
                                 }
 
+                                if (!isReplicasValid) {
+                                  setDeployResult({
+                                    type: "error",
+                                    message:
+                                      "Please enter a valid replicas value (minimum 1).",
+                                  })
+                                  return
+                                }
+
                                 const deploymentPayload = {
                                   clusterId: selectedClusterId,
                                   provider: CloudProvider.AWS,
                                   repositoryId: data.repositoryId,
                                   port: portNumber,
+                                  replicas: replicasNumber,
                                   usePrivateRegistry: repoPrivate,
                                   vmEnv: vmEnv.trim() || undefined,
                                   storageEnv: storageEnv.trim() || undefined,
@@ -705,7 +743,8 @@ export default function RequestDetail({ slug }: { slug: string }) {
                               disabled={
                                 !selectedClusterId ||
                                 deployMutation.isPending ||
-                                !isPortValid
+                                !isPortValid ||
+                                !isReplicasValid
                               }
                             >
                               {deployMutation.isPending ? (
